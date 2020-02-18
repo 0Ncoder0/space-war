@@ -10,19 +10,34 @@ const view=Point.rectangle({
   width:width, 
   angle:90
 })
-let angle = 90
+
+// 每帧执行一次清除和渲染
 setInterval(()=>{
   draw.fill(view,'#000')
   crossLine(canvas,ctx)
   render()
 },1000/60)
+// 渲染方法
+let angle = 90
 function render(){
-  let triangle=Point.circle({
+  let rectangle=Point.rectangle({
     center:{x:width/2,y:height/2},
-    radius:20
+    height:20,
+    width:200,
+    angle:angle
   })
+  let triangle=Point.triangle({
+    center:{x:width/2,y:height/2},
+    height:200,
+    width:200,
+    angle:angle
+  })
+  angle++
+
   draw.fill(triangle,'#FFF')
+  // draw.fill(rectangle,'#FFF')
 }
+// 中心十字线
 function crossLine(canvas,ctx){
   ctx.beginPath()
   ctx.moveTo(canvas.clientWidth/2,0)

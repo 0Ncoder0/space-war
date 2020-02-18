@@ -15,10 +15,10 @@ window.Point = {
     angle=angle===0?angle:( -angle||90 )
     const util=this.util
     const topCenter= util.getPoint(center,util.toPiAngle(angle),height/2) //上边中心点
-    const topLeft= util.getPoint(topCenter,util.toPiAngle(angle+90),height/2) // 左上角顶点
-    const topRight=util.getPoint(topCenter,util.toPiAngle(angle-90),height/2) // 右上角顶点
-    const bottomLeft= util.getPoint(topLeft,util.toPiAngle(angle+180),width) // 左下角顶点
-    const bottomRight=util.getPoint(topRight,util.toPiAngle(angle+180),width) // 右下角顶点
+    const topLeft= util.getPoint(topCenter,util.toPiAngle(angle+90),width/2) // 左上角顶点
+    const topRight=util.getPoint(topCenter,util.toPiAngle(angle-90),width/2) // 右上角顶点
+    const bottomLeft= util.getPoint(topLeft,util.toPiAngle(angle+180),height) // 左下角顶点
+    const bottomRight=util.getPoint(topRight,util.toPiAngle(angle+180),height) // 右下角顶点
     return [topLeft,topRight,bottomRight,bottomLeft]
   },
   circle({center,radius}){
