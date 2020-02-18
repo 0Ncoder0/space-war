@@ -1,54 +1,57 @@
 const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext("2d")
-const height=canvas.clientHeight//600
-const width=canvas.clientWidth//600
+const height = canvas.clientHeight//600
+const width = canvas.clientWidth//600
 const draw = new Draw(ctx)
-
-const view=Point.rectangle({
-  center:{x:width/2,y:height/2},
-  height:height,
-  width:width, 
-  angle:90
+const view = Point.rectangle({
+  center: { x: width / 2, y: height / 2 },
+  height: height,
+  width: width,
+  angle: 90
 })
-
+const player = new Player({
+  center: { x: width / 2, y: height / 2 },
+})
+// 玩家移动函数
+player.move = () => {
+  player.config.center = Point.util.getPoint(
+    player.config.center,
+    Point.util.toRadian(-player.config.angle),
+    player.config.speed
+  )
+}
+// 挂载操作事件
+for (let i in Control) {
+  if (player.actions[i]) {
+    Control[i].keydown.push(player.actions[i].keydown)
+    Control[i].keyup.push(player.actions[i].keyup)
+  }
+}
 // 每帧执行一次清除和渲染
-setInterval(()=>{
-  draw.fill(view,'#000')
-  crossLine(canvas,ctx)
+setInterval(() => {
+  draw.fill(view, '#000')
+  // crossLine(canvas, ctx)
   render()
-},1000/60)
+}, 1000 / 60)
 // 渲染方法
-let angle = 90
-function render(){
-  let rectangle=Point.rectangle({
-    center:{x:width/2,y:height/2},
-    height:20,
-    width:200,
-    angle:angle
-  })
-  let triangle=Point.triangle({
-    center:{x:width/2,y:height/2},
-    height:200,
-    width:200,
-    angle:angle
-  })
-  angle++
-
-  draw.fill(triangle,'#FFF')
-  // draw.fill(rectangle,'#FFF')
+let angle = 0
+function render() {
+  player.move()
+  let playerItem = Point[player.config.shape](player.config)
+  draw.fill(playerItem, player.config.color)
 }
 // 中心十字线
-function crossLine(canvas,ctx){
+function crossLine(canvas, ctx) {
   ctx.beginPath()
-  ctx.moveTo(canvas.clientWidth/2,0)
-  ctx.lineTo(canvas.clientWidth/2,canvas.clientHeight)
+  ctx.moveTo(canvas.clientWidth / 2, 0)
+  ctx.lineTo(canvas.clientWidth / 2, canvas.clientHeight)
   ctx.closePath()
-  ctx.strokeStyle='red'
+  ctx.strokeStyle = 'red'
   ctx.stroke()
   ctx.beginPath()
-  ctx.moveTo(0,canvas.clientHeight/2)
-  ctx.lineTo(canvas.clientWidth,canvas.clientHeight/2)
+  ctx.moveTo(0, canvas.clientHeight / 2)
+  ctx.lineTo(canvas.clientWidth, canvas.clientHeight / 2)
   ctx.closePath()
-  ctx.strokeStyle='red'
+  ctx.strokeStyle = 'red'
   ctx.stroke()
 }
