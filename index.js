@@ -61,19 +61,31 @@ Ship.prototype.move = function () {
     this.config.speed
   )
   // 尾焰移动
-  this.tailFlame.center=Point.util.getPoint(
+  this.tailFlame.center = Point.util.getPoint(
     this.config.center,
     Point.util.toRadian(-this.tailFlame.angle),
-    (this.config.height+this.tailFlame.height)/2
+    (this.config.height + this.tailFlame.height) / 2
   )
 }
 // 绘制
 Ship.prototype.draw = function () {
 
   let ship = Point.triangle(this.config)
-  let tailFlame=Point.triangle(this.tailFlame)
+  let tailFlame = Point.triangle(this.tailFlame)
   draw.fill(ship, this.config.color)
   draw.fill(tailFlame, this.tailFlame.color)
+  for (let i in this.bullets) {
+    let bullet = Point.rectangle(this.bullets[i].config)
+    draw.fill(bullet, this.bullets[i].color)
+  }
+}
+// 开火
+Ship.prototype.fire = function () {
+  return Point.util.getPoint(
+    this.config.center,
+    Point.util.toRadian(-this.config.angle),
+    this.config.height / 2
+  )
 }
 // 挂载操作事件
 Ship.prototype.load = function () {
@@ -87,14 +99,24 @@ Ship.prototype.load = function () {
 
 //#endregion
 
+//#region  录入子弹对象公共方法
+Bullet.prototype.move = function () {
+  this.config.center = Point.util.getPoint(
+    this.config.center,
+    Point.util.toRadian(-this.config.angle),
+    this.config.speed
+  )
+}
+//#endregion
+
 //#region  执行
 
 // 生产玩家对象
 const player = new Ship({
-  width:10,
-  height:20,
-  maxSpeed:6,
-  turnSpeed:6,
+  width: 10,
+  height: 20,
+  maxSpeed: 6,
+  turnSpeed: 6,
   center: { x: width / 2, y: height / 2 },
   border: { x: width, y: height }
 })
