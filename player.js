@@ -1,8 +1,10 @@
-// 需要外界录入的方法名
-// # this.actions.move 玩家中心点移动
-// # this.draw 绘制玩家
+// 需要外界录入公共的方法名
+// # move 玩家中心点移动
+// # draw 绘制玩家
 
-window.Player = function (config) {
+//#region  玩家对象
+
+window.Ship = function (config) {
   this.config = {
     shape: 'triangle',
     color: '#FFF',
@@ -29,7 +31,6 @@ window.Player = function (config) {
       } else {
         _config._speed = speed
       }
-      console.log('speed', _config._speed)
     },
     get() {
       return _config._speed || 0
@@ -44,7 +45,6 @@ window.Player = function (config) {
       if (angle < 0) {
         _config._angle = 360 + _config._angle
       }
-      console.log('angle', _config._angle)
     },
     get() {
       return _config._angle || 0
@@ -104,6 +104,7 @@ window.Player = function (config) {
       timers[key] = null
     }
   }
+  // 操作
   this.actions = {
     up: new Acction('up', () => {
       _config.speed += _config.acceleration
@@ -119,7 +120,40 @@ window.Player = function (config) {
       const da = _config.speed / _config.maxSpeed * _config.turnSpeed
       _config.angle -= da
     }),
-    move() { }
+    fire:new Acction('fire',()=>{
+
+    })
+
   }
-  this.draw=()=>{}
+}
+
+//#endregion
+
+//#region  外界录入
+
+// 移动
+window.Ship.prototype.move=function(){}
+// 绘制
+window.Ship.prototype.draw=function(){}
+// 加载操作
+window.Ship.prototype.load=function(){}
+
+//#endregion
+
+window.Bullet=function(config){
+  this.config={
+    shape: '',
+    color: '#FFF',
+    center: { x: 100, y: 100 },
+    height: 20,
+    width: 10,
+    angle: 90,
+    acceleration: 0.1,
+    speed: 0,
+    maxSpeed: 6,
+    turnSpeed: 6,
+    border: {
+      x: 600, y: 600
+    }
+  }
 }

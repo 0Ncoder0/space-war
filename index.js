@@ -10,41 +10,18 @@ const view = Point.rectangle({
   width: width,
   angle: 90
 })
-// 生产玩家对象
-const player = new Player({
-  center: { x: width / 2, y: height / 2 },
-  border:{x:width,y:height }
-})
-// 玩家移动函数
-player.move = () => {
-  player.config.center = Point.util.getPoint(
-    player.config.center,
-    Point.util.toRadian(-player.config.angle),
-    player.config.speed
-  )
-}
-// 挂载操作事件
-for (let i in Control) {
-  if (player.actions[i]) {
-    Control[i].keydown.push(player.actions[i].keydown)
-    Control[i].keyup.push(player.actions[i].keyup)
-  }
-}
-// 每帧执行一次清除和渲染
-setInterval(() => {
-  draw.fill(view, '#000')
-  // crossLine(canvas, ctx)
-  render()
-}, 1000 / 60)
-// 渲染方法
-let angle = 0
-function render() {
+//#region  公共函数
+
+// 每一帧需要绘制的内容
+function frame() {
+  // 移动并绘制玩家
   player.move()
-  let playerItem = Point[player.config.shape](player.config)
-  draw.fill(playerItem, player.config.color)
+  player.draw()
   // 显示部分参数
-  draw.write(`SPEED : ${player.config.speed.toFixed(2)}`,{x:width-120,y:20},'green')
-  draw.write(`ANGLE : ${(player.config.angle%360).toFixed(2)}`,{x:width-120,y:55},'green')
+  const speed = player.config.speed.toFixed(2)
+  const angle = (player.config.angle % 360).toFixed(2)
+  draw.write(`SPEED : ${speed}`, { x: width - 120, y: 20 }, 'green')
+  draw.write(`ANGLE : ${angle}`, { x: width - 120, y: 55 }, 'green')
 }
 // 中心十字线
 function crossLine(canvas, ctx) {
@@ -61,3 +38,55 @@ function crossLine(canvas, ctx) {
   ctx.strokeStyle = 'red'
   ctx.stroke()
 }
+// 渲染
+function render(frame) {
+  // 每帧执行一次清除和渲染
+  setInterval(() => {
+    draw.fill(view, '#000')
+    // crossLine(canvas, ctx)
+    frame()
+  }, 1000 / 60)
+}
+
+//#endregion
+
+//#region 录入飞船对象公共方法
+
+// 移动
+Ship.prototype.move = function () {
+  this.config.center = Point.util.getPoint(
+    this.config.center,
+    Point.util.toRadian(-this.config.angle),
+    this.config.speed
+  )
+}
+// 绘制
+Ship.prototype.draw = function () {
+  let item = Point.triangle(this.config)
+  draw.fill(item, this.config.color)
+}
+// 挂载操作事件
+Ship.prototype.load = function () {
+  for (let i in Control) {
+    if (this.actions[i]) {
+      Control[i].keydown.push(this.actions[i].keydown)
+      Control[i].keyup.push(this.actions[i].keyup)
+    }
+  }
+}
+
+//#endregion
+
+//#region  执行
+
+// 生产玩家对象
+const player = new Ship({
+  center: { x: width / 2, y: height / 2 },
+  border: { x: width, y: height }
+})
+// 加载操作
+player.load()
+// 渲染帧
+render(frame)
+
+//#endregion
