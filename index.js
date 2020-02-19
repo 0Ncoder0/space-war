@@ -54,16 +54,26 @@ function render(frame) {
 
 // 移动
 Ship.prototype.move = function () {
+  // 船身移动
   this.config.center = Point.util.getPoint(
     this.config.center,
     Point.util.toRadian(-this.config.angle),
     this.config.speed
   )
+  // 尾焰移动
+  this.tailFlame.center=Point.util.getPoint(
+    this.config.center,
+    Point.util.toRadian(-this.tailFlame.angle),
+    (this.config.height+this.tailFlame.height)/2
+  )
 }
 // 绘制
 Ship.prototype.draw = function () {
-  let item = Point.triangle(this.config)
-  draw.fill(item, this.config.color)
+
+  let ship = Point.triangle(this.config)
+  let tailFlame=Point.triangle(this.tailFlame)
+  draw.fill(ship, this.config.color)
+  draw.fill(tailFlame, this.tailFlame.color)
 }
 // 挂载操作事件
 Ship.prototype.load = function () {
@@ -81,6 +91,10 @@ Ship.prototype.load = function () {
 
 // 生产玩家对象
 const player = new Ship({
+  width:10,
+  height:20,
+  maxSpeed:6,
+  turnSpeed:6,
   center: { x: width / 2, y: height / 2 },
   border: { x: width, y: height }
 })
