@@ -1,3 +1,7 @@
+// 需要外界录入的方法名
+// # this.actions.move 玩家中心点移动
+// # this.draw 绘制玩家
+
 window.Player = function (config) {
   this.config = {
     shape: 'triangle',
@@ -36,9 +40,9 @@ window.Player = function (config) {
       if (_config._speed === 0) {
         return
       }
-      _config._angle = angle%360
-      if(angle<0){
-        _config._angle=360+_config._angle
+      _config._angle = angle % 360
+      if (angle < 0) {
+        _config._angle = 360 + _config._angle
       }
       console.log('angle', _config._angle)
     },
@@ -87,72 +91,35 @@ window.Player = function (config) {
   })
   Object.assign(this.config, { angle: 90, speed: 0 }, config)
   //#endregion 配置
-  let timers = {
-    up: null,
-    down: null,
-    right: null,
-    left: null,
+  let timers = {}
+  Acction = function (key, action) {
+    this.keydown = () => {
+      if (timers[key]) {
+        return
+      }
+      timers[key] = setInterval(action, 1000 / 60)
+    }
+    this.keyup = () => {
+      clearInterval(timers[key])
+      timers[key] = null
+    }
   }
-  Acction=function(){}
   this.actions = {
-    up: {
-      keydown() {
-        if (timers.up) {
-          return
-        }
-        timers.up = setInterval(() => {
-          _config.speed += _config.acceleration
-        }, 1000 / 60)
-      },
-      keyup() {
-        clearInterval(timers.up)
-        timers.up = null
-      },
-    },
-    down: {
-      keydown() {
-        if (timers.down) {
-          return
-        }
-        timers.down = setInterval(() => {
-          _config.speed -= _config.acceleration
-        }, 1000 / 60)
-      },
-      keyup() {
-        clearInterval(timers.down)
-        timers.down = null
-      },
-    },
-    left: {
-      keydown() {
-        if (timers.left) {
-          return
-        }
-        timers.left = setInterval(() => {
-          const da = _config.speed / _config.maxSpeed * _config.turnSpeed
-          _config.angle += da
-        }, 1000 / 60)
-      },
-      keyup() {
-        clearInterval(timers.left)
-        timers.left = null
-      },
-    },
-    right: {
-      keydown() {
-        if (timers.right) {
-          return
-        }
-        timers.right = setInterval(() => {
-          const da = _config.speed / _config.maxSpeed * _config.turnSpeed
-          _config.angle -= da
-        }, 1000 / 60)
-      },
-      keyup() {
-        clearInterval(timers.right)
-        timers.right = null
-      },
-    },
+    up: new Acction('up', () => {
+      _config.speed += _config.acceleration
+    }),
+    down: new Acction('down', () => {
+      _config.speed -= _config.acceleration
+    }),
+    left: new Acction('left', () => {
+      const da = _config.speed / _config.maxSpeed * _config.turnSpeed
+      _config.angle += da
+    }),
+    right: new Acction('right', () => {
+      const da = _config.speed / _config.maxSpeed * _config.turnSpeed
+      _config.angle -= da
+    }),
     move() { }
   }
+  this.draw=()=>{}
 }

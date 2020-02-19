@@ -3,6 +3,7 @@ const ctx = canvas.getContext("2d")
 const height = canvas.clientHeight//600
 const width = canvas.clientWidth//600
 const draw = new Draw(ctx)
+// 背景
 const view = Point.rectangle({
   center: { x: width / 2, y: height / 2 },
   height: height,
