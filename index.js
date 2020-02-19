@@ -9,8 +9,10 @@ const view = Point.rectangle({
   width: width,
   angle: 90
 })
+// 生产玩家对象
 const player = new Player({
   center: { x: width / 2, y: height / 2 },
+  border:{x:width,y:height }
 })
 // 玩家移动函数
 player.move = () => {
@@ -39,6 +41,9 @@ function render() {
   player.move()
   let playerItem = Point[player.config.shape](player.config)
   draw.fill(playerItem, player.config.color)
+  // 显示部分参数
+  draw.write(`SPEED : ${player.config.speed.toFixed(2)}`,{x:width-120,y:20},'green')
+  draw.write(`ANGLE : ${(player.config.angle%360).toFixed(2)}`,{x:width-120,y:55},'green')
 }
 // 中心十字线
 function crossLine(canvas, ctx) {
