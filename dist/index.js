@@ -1,47 +1,4 @@
-window.Control = {
-  'up': {
-    key: ['w', 'W', 'up'],
-    keydown:[],
-    keypress:[],
-    keyup:[],
-  },
-  'down': {
-    key: ['s', 'S', 'down'],
-    keydown:[],
-    keypress:[],
-    keyup:[],
-  },
-  'left': {
-    key: ['a', 'A', 'left'],
-    keydown:[],
-    keypress:[],
-    keyup:[],
-  },
-  'right': {
-    key: ['d', 'D', 'right'],
-    keydown:[],
-    keypress:[],
-    keyup:[],
-  },
-  'fire': {
-    key: ['f', 'F', ' '],
-    keydown:[],
-    keypress:[],
-    keyup:[],
-  },
-}
-const actions=['keydown','keyup','keypress']
-actions.forEach(action=>{
-  window.addEventListener(action, (e) => {
-    for (let i in window.Control) {
-      if (window.Control[i].key.indexOf(e.key) !== -1) {
-        for(let k in window.Control[i][action]){
-          window.Control[i][action][k]()
-        }
-      }
-    }
-  })
-})
+
 window.Draw = function (ctx) {
   this.ctx = ctx
   this.fill = (points, color) => {
@@ -64,9 +21,42 @@ window.Draw = function (ctx) {
 }
 
 
-//#region  飞船对象
 
+
+window.Bullet = function (config) {
+
+  this.config = {
+    shape: 'rectangle',
+    color: '#FFF',
+    center: { x: 100, y: 100 },
+    height: 3,
+    width: 3,
+    angle: 90,
+    acceleration: 0.1,
+    speed: 0,
+    border: {
+      x: 600, y: 600
+    },
+    destroyed: false
+  }
+  Object.assign(this.config, config)
+  const timer = setInterval(() => {
+    if (this.config.center.x > this.config.border.x || this.config.center.x < 0) {
+      this.config.destroyed = true
+      clearInterval(timer)
+    }
+    if (this.config.center.y > this.config.border.y || this.config.center.y < 0) {
+      this.config.destroyed = true
+      clearInterval(timer)
+    }
+    this.move()
+
+  }, 1000 / 60)
+}
+// 移动
+window.Bullet.prototype.move = function () { }
 window.Ship = function (config, tailFlame) {
+
   tailFlame = tailFlame || {}
   config = config || {}
   this.config = {
@@ -168,9 +158,6 @@ window.Ship = function (config, tailFlame) {
   }
   // 从飞船发射的子弹
   this.bullets = []
-  setInterval(() => {
-    this.bullets = this.bullets.filter(e => !e.config.destroyed)
-  }, 1000 / 60)
   let timers = {}
   Acction = function (key, action, tnterval) {
     this.keydown = () => {
@@ -217,11 +204,8 @@ window.Ship = function (config, tailFlame) {
       }))
 
     }, 1000 / 5)
-
   }
 }
-//#region  外界录入
-
 // 移动
 window.Ship.prototype.move = function () { }
 // 绘制
@@ -230,46 +214,6 @@ window.Ship.prototype.draw = function () { }
 window.Ship.prototype.load = function () { }
 // 发射导弹 返回一个导弹坐标参数
 window.Ship.prototype.fire = function () { }
-//#endregion
-//#endregion
-
-//#region  子弹对象
-
-window.Bullet = function (config) {
-  this.config = {
-    shape: 'rectangle',
-    color: '#FFF',
-    center: { x: 100, y: 100 },
-    height: 3,
-    width: 3,
-    angle: 90,
-    acceleration: 0.1,
-    speed: 0,
-    border: {
-      x: 600, y: 600
-    },
-    destroyed: false
-  }
-  Object.assign(this.config, config)
-  const timer = setInterval(() => {
-    if (this.config.center.x > this.config.border.x || this.config.center.x < 0) {
-      this.config.destroyed = true
-      clearInterval(timer)
-    }
-    if (this.config.center.y > this.config.border.y || this.config.center.y < 0) {
-      this.config.destroyed = true
-      clearInterval(timer)
-    }
-    this.move()
-
-  }, 1000 / 60)
-}
-//#region  外界录入
-
-window.Bullet.prototype.move = function () { }
-
-//#endregion
-//#endregion
 window.Point = {
 
   // 中心点，高，宽，角度 // angle 角度
@@ -323,6 +267,50 @@ window.Point = {
     }
   },
 }
+window.Control_Player_0 = {
+  'up': {
+    key: ['w', 'W'],
+    keydown:[],
+    keypress:[],
+    keyup:[],
+  },
+  'down': {
+    key: ['s', 'S'],
+    keydown:[],
+    keypress:[],
+    keyup:[],
+  },
+  'left': {
+    key: ['a', 'A'],
+    keydown:[],
+    keypress:[],
+    keyup:[],
+  },
+  'right': {
+    key: ['d', 'D'],
+    keydown:[],
+    keypress:[],
+    keyup:[],
+  },
+  'fire': {
+    key: ['f', 'F', ' '],
+    keydown:[],
+    keypress:[],
+    keyup:[],
+  }
+}
+const actions=['keydown','keyup','keypress']
+actions.forEach(action=>{
+  window.addEventListener(action, (e) => {
+    for (let i in window.Control_Player_0) {
+      if (window.Control_Player_0[i].key.indexOf(e.key) !== -1) {
+        for(let k in window.Control_Player_0[i][action]){
+          window.Control_Player_0[i][action][k]()
+        }
+      }
+    }
+  })
+})
 const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext("2d")
 const height = canvas.clientHeight//600
@@ -337,17 +325,7 @@ const view = Point.rectangle({
 })
 //#region  公共函数
 
-// 每一帧需要绘制的内容
-function frame() {
-  // 移动并绘制玩家
-  player.move()
-  player.draw()
-  // 显示部分参数
-  const speed = player.config.speed.toFixed(2)
-  const angle = (player.config.angle % 360).toFixed(2)
-  draw.write(`SPEED : ${speed}`, { x: width - 120, y: 20 }, 'green')
-  draw.write(`ANGLE : ${angle}`, { x: width - 120, y: 55 }, 'green')
-}
+
 // 中心十字线
 function crossLine(canvas, ctx) {
   ctx.beginPath()
@@ -394,7 +372,6 @@ Ship.prototype.move = function () {
 }
 // 绘制
 Ship.prototype.draw = function () {
-
   let ship = Point.triangle(this.config)
   let tailFlame = Point.triangle(this.tailFlame)
   draw.fill(ship, this.config.color)
@@ -414,10 +391,10 @@ Ship.prototype.fire = function () {
 }
 // 挂载操作事件
 Ship.prototype.load = function () {
-  for (let i in Control) {
+  for (let i in Control_Player_0) {
     if (this.actions[i]) {
-      Control[i].keydown.push(this.actions[i].keydown)
-      Control[i].keyup.push(this.actions[i].keyup)
+      Control_Player_0[i].keydown.push(this.actions[i].keydown)
+      Control_Player_0[i].keyup.push(this.actions[i].keyup)
     }
   }
 }
@@ -450,4 +427,15 @@ player.load()
 // 渲染帧
 render(frame)
 
+// 每一帧需要绘制的内容
+function frame() {
+  // 移动并绘制玩家
+  player.move()
+  player.draw()
+  // 显示部分参数
+  const speed = player.config.speed.toFixed(2)
+  const angle = (player.config.angle % 360).toFixed(2)
+  draw.write(`SPEED : ${speed}`, { x: width - 120, y: 20 }, 'green')
+  draw.write(`ANGLE : ${angle}`, { x: width - 120, y: 55 }, 'green')
+}
 //#endregion

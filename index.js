@@ -12,17 +12,7 @@ const view = Point.rectangle({
 })
 //#region  公共函数
 
-// 每一帧需要绘制的内容
-function frame() {
-  // 移动并绘制玩家
-  player.move()
-  player.draw()
-  // 显示部分参数
-  const speed = player.config.speed.toFixed(2)
-  const angle = (player.config.angle % 360).toFixed(2)
-  draw.write(`SPEED : ${speed}`, { x: width - 120, y: 20 }, 'green')
-  draw.write(`ANGLE : ${angle}`, { x: width - 120, y: 55 }, 'green')
-}
+
 // 中心十字线
 function crossLine(canvas, ctx) {
   ctx.beginPath()
@@ -69,7 +59,6 @@ Ship.prototype.move = function () {
 }
 // 绘制
 Ship.prototype.draw = function () {
-
   let ship = Point.triangle(this.config)
   let tailFlame = Point.triangle(this.tailFlame)
   draw.fill(ship, this.config.color)
@@ -89,10 +78,10 @@ Ship.prototype.fire = function () {
 }
 // 挂载操作事件
 Ship.prototype.load = function () {
-  for (let i in Control) {
+  for (let i in Control_Player_0) {
     if (this.actions[i]) {
-      Control[i].keydown.push(this.actions[i].keydown)
-      Control[i].keyup.push(this.actions[i].keyup)
+      Control_Player_0[i].keydown.push(this.actions[i].keydown)
+      Control_Player_0[i].keyup.push(this.actions[i].keyup)
     }
   }
 }
@@ -125,4 +114,15 @@ player.load()
 // 渲染帧
 render(frame)
 
+// 每一帧需要绘制的内容
+function frame() {
+  // 移动并绘制玩家
+  player.move()
+  player.draw()
+  // 显示部分参数
+  const speed = player.config.speed.toFixed(2)
+  const angle = (player.config.angle % 360).toFixed(2)
+  draw.write(`SPEED : ${speed}`, { x: width - 120, y: 20 }, 'green')
+  draw.write(`ANGLE : ${angle}`, { x: width - 120, y: 55 }, 'green')
+}
 //#endregion
