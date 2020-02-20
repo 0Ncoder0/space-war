@@ -1,0 +1,23 @@
+{
+  "name": "space-war",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build":"node ./tool/bind.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0Ncoder0/space-war.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/0Ncoder0/space-war/issues"
+  },
+  "homepage": "https://github.com/0Ncoder0/space-war#readme"
+}
