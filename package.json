@@ -7,7 +7,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build":"node ./tool/bind.js"
+    "build": "node ./tool/bind.js"
   },
   "repository": {
     "type": "git",
