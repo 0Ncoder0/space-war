@@ -1,8 +1,9 @@
+import Draw from './lib/Printer.js/index.js.js'
 const canvas = document.getElementById('canvas')
-const ctx = canvas.getContext("2d")
-const height = canvas.clientHeight//600
-const width = canvas.clientWidth//600
-const draw = new Draw(ctx)
+const ctx = canvas.getContext('2d')
+const height = canvas.clientHeight //600
+const width = canvas.clientWidth //600
+const printer = new Printer(ctx)
 // 背景
 const view = Point.rectangle({
   center: { x: width / 2, y: height / 2 },
@@ -11,7 +12,6 @@ const view = Point.rectangle({
   angle: 90
 })
 //#region  公共函数
-
 
 // 中心十字线
 function crossLine(canvas, ctx) {
@@ -32,7 +32,7 @@ function crossLine(canvas, ctx) {
 function render(frame) {
   // 每帧执行一次清除和渲染
   setInterval(() => {
-    draw.fill(view, '#000')
+    printer.fill(view, '#000')
     // crossLine(canvas, ctx)
     frame()
   }, 1000 / 60)
@@ -43,7 +43,7 @@ function render(frame) {
 //#region 录入飞船对象公共方法
 
 // 移动
-Ship.prototype.move = function () {
+Ship.prototype.move = function() {
   // 船身移动
   this.config.center = Point.util.getPoint(
     this.config.center,
@@ -58,18 +58,18 @@ Ship.prototype.move = function () {
   )
 }
 // 绘制
-Ship.prototype.draw = function () {
+Ship.prototype.draw = function() {
   let ship = Point.triangle(this.config)
   let tailFlame = Point.triangle(this.tailFlame)
-  draw.fill(ship, this.config.color)
-  draw.fill(tailFlame, this.tailFlame.color)
+  printer.fill(ship, this.config.color)
+  printer.fill(tailFlame, this.tailFlame.color)
   for (let i in this.bullets) {
     let bullet = Point.rectangle(this.bullets[i].config)
-    draw.fill(bullet, this.bullets[i].color)
+    printer.fill(bullet, this.bullets[i].color)
   }
 }
 // 开火
-Ship.prototype.fire = function () {
+Ship.prototype.fire = function() {
   return Point.util.getPoint(
     this.config.center,
     Point.util.toRadian(-this.config.angle),
@@ -77,7 +77,7 @@ Ship.prototype.fire = function () {
   )
 }
 // 挂载操作事件
-Ship.prototype.load = function () {
+Ship.prototype.load = function() {
   for (let i in Control_Player_0) {
     if (this.actions[i]) {
       Control_Player_0[i].keydown.push(this.actions[i].keydown)
@@ -89,7 +89,7 @@ Ship.prototype.load = function () {
 //#endregion
 
 //#region  录入子弹对象公共方法
-Bullet.prototype.move = function () {
+Bullet.prototype.move = function() {
   this.config.center = Point.util.getPoint(
     this.config.center,
     Point.util.toRadian(-this.config.angle),
@@ -122,7 +122,7 @@ function frame() {
   // 显示部分参数
   const speed = player.config.speed.toFixed(2)
   const angle = (player.config.angle % 360).toFixed(2)
-  draw.write(`SPEED : ${speed}`, { x: width - 120, y: 20 }, 'green')
-  draw.write(`ANGLE : ${angle}`, { x: width - 120, y: 55 }, 'green')
+  printer.write(`SPEED : ${speed}`, { x: width - 120, y: 20 }, 'green')
+  printer.write(`ANGLE : ${angle}`, { x: width - 120, y: 55 }, 'green')
 }
 //#endregion
