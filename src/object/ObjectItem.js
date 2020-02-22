@@ -9,7 +9,7 @@ const ObjectItem = function(config) {
   // 在全局保存这个对象的指向
   GlobalItem.addItem(this)
 }
-//#region static
+// static
 // 默认配置参数
 ObjectItem.prototype.config_default = ObjectItem.config_default = {
   name: 'objectItem',
@@ -37,8 +37,7 @@ ObjectItem.prototype.config_default = ObjectItem.config_default = {
   interval: 1000 / 100, //自动模式下的数据刷新间隔
   destroyed: false
 }
-//#endregion static
-//#region public
+// public
 // 移动
 ObjectItem.prototype.move = function(distance, angle) {
   distance = distance || this.speed
@@ -66,8 +65,6 @@ ObjectItem.prototype.auto = function() {
     this.move(speed, turnSpeed)
   }, 1000 / perSecond)
 }
-//#endregion public
-//#region getter
 ObjectItem.prototype.getBody = function() {
   return Point[this.shape]({
     center: { x: this.centerX, y: this.centerY },
@@ -77,8 +74,7 @@ ObjectItem.prototype.getBody = function() {
     angle: -this.angle
   })
 }
-//#endregion getter
-//#region setter
+// setter
 ObjectItem.prototype.setCenter = function(val) {
   this.setY(val.y)
   this.setX(val.x)
@@ -123,7 +119,5 @@ ObjectItem.prototype.setDestroyed = function(val) {
     GlobalItem.removeItem(this)
   }
 }
-
-//#endregion setter
 
 export default ObjectItem

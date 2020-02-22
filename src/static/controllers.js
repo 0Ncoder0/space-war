@@ -1,3 +1,4 @@
+// 保存控制器配置
 import Controller from '../lib/Controller'
 
 const player_0 = {

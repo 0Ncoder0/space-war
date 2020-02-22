@@ -1,3 +1,5 @@
+// 保存Item的配置 宽高颜色等
+
 import Printer from '../lib/Printer'
 const printer = new Printer()
 const fun = {
@@ -44,8 +46,8 @@ const bullet_normal = {
 
   centerX: 0,
   centerY: 0,
-  borderX: 0,
-  borderY: 0,
+  centerX: printer.width / 2,
+  centerY: printer.height / 2,
   angle: 0,
   // 移动速度
   acceleration: 0, //加速度 像素/秒^2
@@ -55,7 +57,7 @@ const bullet_normal = {
   // 转向速度
   turnAcceleration: 0, //转向加速度 角度/秒^2
   turnSpeed: 0, // 转向速度 角度/秒
-  maxTurnSpeed: 0 // 角度/秒
+  maxTurnSpeed: 0, // 角度/秒
 }
 export default {
   fun,

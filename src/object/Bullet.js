@@ -8,7 +8,7 @@ Bullet.prototype.config_default = Bullet.config_default = Object.assign(
   {},
   Bullet.prototype.config_default,
   {
-    name: 'bulet',
+    name: 'bullet',
     shape: 'rectangle',
     color: 'red'
   }

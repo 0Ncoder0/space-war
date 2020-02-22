@@ -20,12 +20,15 @@ Controller.prototype.events = Controller.events = ['keydown', 'keyup', 'keypress
 //#region public
 
 // 挂载控制器
+FlagSwitcher.addFlag('ShowEventKey')
 Controller.prototype.load = function() {
   // 遍历事件
   this.events.forEach(event => {
     // 监听事件
     window.addEventListener(event, e => {
-      if (window.showEventKey) console.info(e.key)
+      if (FlagSwitcher.getFlag('ShowEventKey')) {
+        console.info(e.key)
+      }
       // 执行对应操作
       const act = this.actions.find(action => action.keys.find(k => k === e.key))
       if (act) {
