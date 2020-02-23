@@ -88,4 +88,10 @@ Plane.prototype.isInnerPoint = function({ x, y }) {
 }
 // 考虑凹型图
 
+const pointsA = []
+const pointsB = []
+
+const isCrossed = Plane.isCrossed(new Plane(pointsA), new Plane(pointsB))
+console.log(isCrossed)
+
 export default Plane
