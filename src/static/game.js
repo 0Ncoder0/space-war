@@ -76,6 +76,26 @@ const Game = {
         item.draw()
       })
     })
+  },
+  classTest() {
+    const printer = new Printer()
+    const itemA = new ObjectItem({
+      centerX: printer.width / 2,
+      centerY: printer.height / 2,
+      width: printer.width,
+      height: 3,
+      angle: 90
+    })
+    const itemB = new ObjectItem({
+      centerX: printer.width / 2,
+      centerY: printer.height / 2,
+      width: 3,
+      height: printer.height,
+      angle: 90
+    })
+    itemA.draw()
+    itemB.draw()
+    console.log(Plane.isCrossed(new Plane(itemA.getBody()), new Plane(itemB.getBody())))
   }
 }
 export default Game
