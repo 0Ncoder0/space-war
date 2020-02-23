@@ -29,7 +29,9 @@ ObjectItem.prototype.config_default = ObjectItem.config_default = {
   borderY: 0, // 最大Y坐标值
   height: 0, // 主体高度
   width: 0, // 主体宽度
+  radius: 0, //主体为圆形时的半径
   angle: 0, // 主体角度 PS:Y轴方向为270度,X轴方向为0度
+
   //血量
   maxHealth: 0, //最大生命值
   health: 0, //生命值 //在撞击时也是对敌方的伤害值
@@ -81,6 +83,7 @@ ObjectItem.prototype.auto = function(perSecond) {
 }
 // 获取图形顶点坐标组
 ObjectItem.prototype.getBody = function() {
+  this.shape === 'circle' && console.log(this.shape)
   return Point[this.shape]({
     center: { x: this.centerX, y: this.centerY },
     height: this.height,

@@ -44,6 +44,19 @@ Printer.prototype.fill = function(points, color) {
   this.ctx.fillStyle = color || 'red'
   this.ctx.fill()
 }
+// 连线
+Printer.prototype.stroke=function(points,width,color){
+  this.ctx.beginPath()
+  for (let i in points) {
+    if (i === 0) {
+      this.ctx.moveTo(points[i].x, points[i].y)
+    } else {
+      this.ctx.lineTo(points[i].x, points[i].y)
+    }
+  }
+  this.ctx.strokeStyle = color || 'red'
+  this.ctx.stroke()
+}
 // 写字
 Printer.prototype.write = function(text, start, color, font) {
   this.ctx.font = '16px arial'

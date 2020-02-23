@@ -59,14 +59,12 @@ import ObjectItem from './ObjectItem'
 const Child = function(config) {
   ObjectItem.call(this, config)
   // # 此对象的构造函数代码
-  this.
   // #
-
 }
 // 复制父对象的公有函数
-Object.assign(Ship.prototype, ObjectItem.prototype)
+Object.assign(Child.prototype, ObjectItem.prototype)
 // 修改默认配置对象
-Child.prototype.config_default = Ship.config_default = Object.assign(
+Child.prototype.config_default = Child.config_default = Object.assign(
   {},
   Child.prototype.config_default,
   {
@@ -79,18 +77,18 @@ Child.prototype.config_default = Ship.config_default = Object.assign(
 // 全对象共用属性
 Child.count = 0 //new Child 的 计数器
 // 公有函数
-Child.prototype.count=function(){
-    Child.count++
+Child.prototype.count = function() {
+  Child.count++
 }
 // 覆盖父类中的函数,但是保留父类函数的内容
-Child.prototype.draw=function(){
-    ObjectItem.prototype.draw.call(this)
-    // 下面写子类函数
-    // #
+Child.prototype.draw = function() {
+  ObjectItem.prototype.draw.call(this)
+  // 下面写子类函数
+  // #
 }
 // setter
-Child.prototype.setCount=function(val){
-    Child.count = val>0 ? val : 0
+Child.prototype.setCount = function(val) {
+  Child.count = val > 0 ? val : 0
 }
 // getter
 Child.prototype.getCount = function() {

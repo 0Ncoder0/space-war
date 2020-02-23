@@ -6,6 +6,7 @@ import GlobalItem from '../lib/GlobalItem'
 import Ship from '../object/Ship'
 import ObjectItem from '../object/ObjectItem'
 import Plane from '../math/Plane'
+import LockedCircle from '../object/LockedCircle'
 window.GlobalItem = GlobalItem
 
 const Game = {
@@ -70,6 +71,9 @@ const Game = {
 
     player_1.manual(player_controller_1, 200, true)
     player_1.setBulletType('bullet_normal')
+    // 测试 瞄准功能
+    new LockedCircle(player_1).auto()
+
     // 渲染程序
     printer.render(() => {
       window.GlobalItem.getItems().forEach(item => {
