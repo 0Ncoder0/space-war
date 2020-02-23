@@ -1,4 +1,12 @@
 const Line = function(pointA, pointB) {
+  pointA = { x: pointA.x, y: pointA.y }
+  pointB = { x: pointB.x, y: pointB.y }
+  if (pointB.x === pointA.x) {
+    pointB.x += 0.001
+  }
+  if (pointB.y === pointA.y) {
+    pointB.y += 0.001
+  }
   this.points = [pointA, pointB]
   const x1 = pointA.x
   const y1 = pointA.y
@@ -10,34 +18,6 @@ const Line = function(pointA, pointB) {
   this.maxY = y1 > y2 ? y1 : y2
   this.minX = x1 < x2 ? x1 : x2
   this.minY = y1 < y2 ? y1 : y2
-  if (Number.isNaN(this.a) || Number.isNaN(this.b)) {
-  }
-  // 平行 Y 轴
-  if (pointA.x - pointB.x === 0) {
-    this.getX = function(y) {
-      if (y <= this.maxY && y >= this.minY) {
-        return this.maxX
-      }
-      return null
-    }
-    this.getY = function(x) {
-      return null
-    }
-    this.a = this.b = null
-  }
-  // 平行 X 轴
-  if (pointA.y - pointB.y === 0) {
-    this.getY = function(x) {
-      if (x <= this.maxX && x >= this.minX) {
-        return this.maxY
-      }
-      return null
-    }
-    this.getX = function(y) {
-      return null
-    }
-    this.a = this.b = null
-  }
 }
 
 Line.prototype.formula = Line.formula = 'y=ax+b'
@@ -47,26 +27,35 @@ Line.prototype.isCrossed = Line.isCrossed = function(lineA, lineB) {
   let b1 = lineA.b
   let a2 = lineB.a
   let b2 = lineB.b
-  let x = null
-  let y = null
+  let x1 = (b2 - b1) / (a1 - a2)
+  let y1 = lineB.getY(x1)
+  let y2 = lineA.getY(x1)
+  let x2 = null
+  if (y1 === null && y2 === null) {
+    return false
+  }
+  y1 !== null && y2 !== null && console.log('outer', y1, y2)
+  if (y1 !== null && y2 !== null && y1 === y2) {
+    console.log('inner', y1, y2)
+    return true
+  }
 
-  x = (b2 - b1) / (a1 - a2)
-  y = lineB.getY(x)
-  console.log(y, lineA.getY(x))
-  if (y !== null && y === lineA.getY(x)) {
+  x2 = y1 === null ? lineB.getX(y2) : lineA.getX(y1)
+
+  if (x2 === null) {
+    return false
+  }
+  console.log('outer', x1, x2)
+  if (x2 === x1) {
+    console.log('inner', x1, x2)
     return true
   }
-  y = (-b1 * a2 + b2 * a1) / (a1 - a2)
-  x = lineB.getX(y)
-  console.log(x, lineA.getX(y))
-  if (x !== null && x === lineA.getX(y)) {
-    return true
-  }
+
   return false
 }
 
 Line.prototype.getX = function(y) {
-  const x = (y - this.b) / this.a
+  let x = (y - this.b) / this.a
   if (x > this.maxX || x < this.minX) {
     return null
   }
@@ -74,18 +63,12 @@ Line.prototype.getX = function(y) {
 }
 
 Line.prototype.getY = function(x) {
-  const y = this.a * x + this.b
+  let y = this.a * x + this.b
   if (y > this.maxY || y < this.minY) {
     return null
   }
   return y
 }
-
-const l1 = new Line({ x: 0, y: 397 }, { x: 891, y: 397 })
-const l2 = new Line({ x: 444, y: 797 }, { x: 444, y: 0 })
-console.log(Line.isCrossed(l1, l2))
-
-console.log(l1.getY(444), l2.getY(444))
-console.log(l1.getY(444), l2.getY(444))
+console.log(1)
 
 export default Line

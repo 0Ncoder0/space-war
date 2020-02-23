@@ -88,7 +88,7 @@ Ship.prototype.fire = function() {
   const center = Point.getPoint(
     { x: this.centerX, y: this.centerY },
     Point.toRadian(-this.angle),
-    (config.height + this.height) / 2 + 1
+    (config.height + this.height) / 2 + 10
   )
   const bullet_config = {
     speed: this.maxSpeed * speedRate,

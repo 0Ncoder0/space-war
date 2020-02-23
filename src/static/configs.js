@@ -43,8 +43,8 @@ const player = {
 }
 const bullet_normal = {
   shape: 'rectangle',
-  height: 20,
-  width: 10,
+  height: 10,
+  width: 3,
   color: 'red',
 
   centerX: 0,

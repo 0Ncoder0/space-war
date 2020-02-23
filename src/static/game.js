@@ -84,14 +84,14 @@ const Game = {
       centerY: printer.height / 2,
       width: printer.width,
       height: 3,
-      angle: 90
+      angle: 91
     })
     const itemB = new ObjectItem({
       centerX: printer.width / 2,
       centerY: printer.height / 2,
       width: 3,
       height: printer.height,
-      angle: 90
+      angle: 91
     })
     itemA.draw()
     itemB.draw()
