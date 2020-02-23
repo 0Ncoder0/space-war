@@ -1,3 +1,4 @@
+// 开关控制器,是否展示FPS之类的
 const FlagSwitcher = function() {}
 // static
 FlagSwitcher.prototype.addFlag = FlagSwitcher.addFlag = function(flag) {

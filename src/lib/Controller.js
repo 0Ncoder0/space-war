@@ -1,3 +1,4 @@
+// 控制器类
 import FlagSwitcher from './FlagSwitcher'
 const Controller = function(controls) {
   this.actions = []
@@ -12,12 +13,8 @@ const Controller = function(controls) {
     this.actions.push(action)
   }
 }
-//#region  static
-
+// static
 Controller.prototype.events = Controller.events = ['keydown', 'keyup', 'keypress']
-
-//#endregion
-//#region public
 
 // 挂载控制器
 FlagSwitcher.addFlag('ShowEventKey')
@@ -45,7 +42,5 @@ Controller.prototype.addAction = function(name, event, action) {
 Controller.prototype.clearAction = function(name, event) {
   this.actions.find(action => action.name == name)[event] = []
 }
-
-//#endregion public
 
 export default Controller

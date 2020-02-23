@@ -1,3 +1,4 @@
+// 绘制工具
 const Printer = function(canvas) {
   if (canvas) {
     this.canvas = canvas
@@ -22,15 +23,14 @@ const Printer = function(canvas) {
   // 帧数
   this.fps = 0
 }
-//#region static
+// static
 Printer.prototype.canvas = Printer.canvas = null
 Printer.prototype.ctx = Printer.ctx = null
 Printer.prototype.setGlobalCanvas = Printer.setGlobalCanvas = function(canvas) {
   Printer.prototype.canvas = canvas
   Printer.prototype.ctx = canvas.getContext('2d')
 }
-//#endregion static
-//#region public
+// public
 // 填充
 Printer.prototype.fill = function(points, color) {
   this.ctx.beginPath()
@@ -66,6 +66,5 @@ Printer.prototype.render = function(frame, interval) {
     time.before = new Date().getTime()
   }, interval || 1000 / 60)
 }
-//#endregion public
 
 export default Printer

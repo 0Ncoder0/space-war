@@ -1,3 +1,4 @@
+// 全局Item保存工具
 const GlobalItem = function() {}
 
 window['global_item'] = window['global_item'] || []

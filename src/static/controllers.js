@@ -13,6 +13,19 @@ const player_0 = {
   map: ['m', 'M']
 }
 
+const player_1 = {
+  up: ['ArrowUp'],
+  down: ['ArrowDown'],
+  right: ['ArrowRight'],
+  left: ['ArrowLeft'],
+  fire: ['0'],
+  fireMode: ['.'],
+  weapon: ['1'],
+  health: ['2'],
+  map: ['3']
+}
+
 export default {
-  player_0: new Controller(player_0)
+  player_0: new Controller(player_0),
+  player_1: new Controller(player_1)
 }

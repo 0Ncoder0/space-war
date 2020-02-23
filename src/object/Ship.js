@@ -1,5 +1,5 @@
 import ObjectItem from './ObjectItem'
-import Point from '../lib/Point'
+import Point from '../math/Point'
 import Printer from '../lib/Printer'
 import Bullet from './Bullet'
 import configs from '../static/configs'
@@ -22,8 +22,10 @@ Ship.prototype.config_default = Ship.config_default = Object.assign(
     shape: 'triangle',
     color: '#FFF',
     flameColor: 'red',
+    bulletType: 'bullet_normal', //子弹类型
     openFire: false, //控制开火
-    firePerSecond: 5 //开火频率 次/秒
+    firePerSecond: 6, //开火频率 次/秒
+    ammo: 999 //弹药数
   }
 )
 
@@ -78,11 +80,15 @@ Ship.prototype.manual = function(controller) {
 }
 // 发射导弹
 Ship.prototype.fire = function() {
-  const speedRate = 1.5
+  if (this.ammo <= 0) {
+    return
+  }
+  const config = configs[this.bulletType || 'bullet_normal']
+  const speedRate = 2
   const center = Point.getPoint(
     { x: this.centerX, y: this.centerY },
     Point.toRadian(-this.angle),
-    (configs.bullet_normal.height + this.height) / 2
+    (config.height + this.height) / 2 + 1
   )
   const bullet_config = {
     speed: this.maxSpeed * speedRate,
@@ -93,7 +99,9 @@ Ship.prototype.fire = function() {
     borderY: this.borderY,
     angle: this.angle
   }
-  new Bullet(Object.assign({}, configs.bullet_normal, bullet_config)).auto()
+
+  new Bullet(Object.assign({}, config, bullet_config)).auto()
+  this.ammo--
 }
 // getter
 // 操作
@@ -171,5 +179,11 @@ Ship.prototype.setTurnSpeed = function(val) {
   } else {
     this.turnSpeed = val
   }
+}
+Ship.prototype.setBulletType = function(val) {
+  this.bulletType = val
+}
+Ship.prototype.firePerSecond = function(val) {
+  this.firePerSecond = val
 }
 export default Ship
