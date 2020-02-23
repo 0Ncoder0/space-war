@@ -34,20 +34,18 @@ Line.prototype.isCrossed = Line.isCrossed = function(lineA, lineB) {
   if (y1 === null && y2 === null) {
     return false
   }
-  y1 !== null && y2 !== null && console.log('outer', y1, y2)
-  if (y1 !== null && y2 !== null && y1 === y2) {
-    console.log('inner', y1, y2)
-    return true
+  if (y1 !== null && !Number.isNaN(y1) && y2 !== null && !Number.isNaN(y2)) {
+    if (y1.toFixed(3) === y2.toFixed(3)) {
+      return true
+    }
   }
 
   x2 = y1 === null ? lineB.getX(y2) : lineA.getX(y1)
 
-  if (x2 === null) {
+  if (x2 === null || Number.isNaN(x2)) {
     return false
   }
-  console.log('outer', x1, x2)
-  if (x2 === x1) {
-    console.log('inner', x1, x2)
+  if (x2.toFixed(3) === x1.toFixed(3)) {
     return true
   }
 
@@ -55,6 +53,9 @@ Line.prototype.isCrossed = Line.isCrossed = function(lineA, lineB) {
 }
 
 Line.prototype.getX = function(y) {
+  if (y > this.maxY || y < this.minY) {
+    return null
+  }
   let x = (y - this.b) / this.a
   if (x > this.maxX || x < this.minX) {
     return null
@@ -63,12 +64,14 @@ Line.prototype.getX = function(y) {
 }
 
 Line.prototype.getY = function(x) {
+  if (x > this.maxX || x < this.minX) {
+    return null
+  }
   let y = this.a * x + this.b
   if (y > this.maxY || y < this.minY) {
     return null
   }
   return y
 }
-console.log(1)
 
 export default Line

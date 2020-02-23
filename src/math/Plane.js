@@ -3,23 +3,21 @@ import Line from './Line'
 const Plane = function(points) {
   this.points = points
   this.lines = []
+  this.lines.push(new Line(points[0], points[points.length - 1]))
   for (let i = 1; i < points.length; i++) {
     this.lines.push(new Line(points[i], points[i - 1]))
   }
-  this.lines.push(new Line(points[points.length - 1], points[0]))
 }
 Plane.prototype.isCrossed = Plane.isCrossed = function(planeA, planeB) {
   for (let i in planeA.points) {
     const isInnerPoint = planeB.isInnerPoint(planeA.points[i])
     if (isInnerPoint) {
-      console.log('isInnerPoint')
       return true
     }
   }
   for (let i in planeB.points) {
     const isInnerPoint = planeA.isInnerPoint(planeB.points[i])
     if (isInnerPoint) {
-      console.log('isInnerPoint')
       return true
     }
   }
@@ -27,7 +25,6 @@ Plane.prototype.isCrossed = Plane.isCrossed = function(planeA, planeB) {
     for (let k in planeB.lines) {
       const isCrossed = Line.isCrossed(planeB.lines[k], planeA.lines[i])
       if (isCrossed) {
-        console.log('isCrossed')
         return true
       }
     }
@@ -78,15 +75,16 @@ Plane.prototype.getYLine = function(x) {
 }
 Plane.prototype.isInnerPoint = function({ x, y }) {
   const YLine = this.getYLine(x)
-
-  if (YLine === null) {
+  const XLine = this.getXLine(y)
+  if (YLine === null || XLine === null) {
     return false
   }
-  const innerX = YLine.getX(y)
-
-  if (innerX === null) {
+  const innerY = YLine.getY(x)
+  const innerX = XLine.getX(y)
+  if (innerY === null || innerX === null) {
     return false
   }
+
   return true
 }
 // 考虑凹型图

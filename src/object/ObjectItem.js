@@ -75,7 +75,6 @@ ObjectItem.prototype.auto = function(perSecond) {
     this.setTurnSpeed(this.turnSpeed + this.turnAcceleration / perSecond)
     const speed = this.speed / perSecond
     const turnSpeed = this.turnSpeed / perSecond
-    // console.log(speed)
     this.move(speed, turnSpeed)
     if (this.openCollisionDetection) this.collisionDetection()
   }, 1000 / perSecond)
@@ -103,7 +102,7 @@ ObjectItem.prototype.collisionDetection = function() {
     }
     const isCrossed = Plane.isCrossed(plane, new Plane(item.getBody()))
     if (isCrossed) {
-      console.log('检测到碰撞 id 为', this.id, item.id)
+      console.info('检测到碰撞 id 为', this.id, item.id)
       //顺序不能乱
       const _item = Object.assign({}, item)
       item.onCollision(Object.assign({}, this))
@@ -116,7 +115,6 @@ ObjectItem.prototype.onCollision = function(target) {
   if (this.openCollisionDetection === false) {
     return
   }
-  console.log(target.health)
   this.onHit(target.health)
 }
 // 受到攻击时触发

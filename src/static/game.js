@@ -6,10 +6,10 @@ import GlobalItem from '../lib/GlobalItem'
 import Ship from '../object/Ship'
 import ObjectItem from '../object/ObjectItem'
 import Plane from '../math/Plane'
+window.GlobalItem = GlobalItem
+
 const Game = {
   test() {
-    window.GlobalItem = GlobalItem
-
     Printer.setGlobalCanvas(window.canvas)
     const printer = new Printer()
 
@@ -80,22 +80,38 @@ const Game = {
   classTest() {
     const printer = new Printer()
     const itemA = new ObjectItem({
-      centerX: printer.width / 2,
-      centerY: printer.height / 2,
-      width: printer.width,
-      height: 3,
-      angle: 91
+      angle: 92.92049999999966,
+      centerX: 329.6979892537654,
+      centerY: 111.42227340964199,
+      height: 20,
+      width: 15,
+      shape: 'triangle'
     })
+
     const itemB = new ObjectItem({
-      centerX: printer.width / 2,
-      centerY: printer.height / 2,
-      width: 3,
-      height: printer.height,
-      angle: 91
+      angle: 0,
+      centerX: 397.5,
+      centerY: 100,
+      color: 'green',
+      height: 100,
+      width: 3
     })
-    itemA.draw()
-    itemB.draw()
     console.log(Plane.isCrossed(new Plane(itemA.getBody()), new Plane(itemB.getBody())))
+
+    printer.render(() => {
+      window.GlobalItem.getItems().forEach(item => {
+        item.draw()
+      })
+    })
+
+    window.setX = function(val) {
+      itemA.centerX += val
+      console.log(Plane.isCrossed(new Plane(itemA.getBody()), new Plane(itemB.getBody())))
+    }
+    window.setY = function(val) {
+      itemA.centerY += val
+      console.log(Plane.isCrossed(new Plane(itemA.getBody()), new Plane(itemB.getBody())))
+    }
   }
 }
 export default Game
