@@ -83,7 +83,6 @@ ObjectItem.prototype.auto = function(perSecond) {
 }
 // 获取图形顶点坐标组
 ObjectItem.prototype.getBody = function() {
-  this.shape === 'circle' && console.log(this.shape)
   return Point[this.shape]({
     center: { x: this.centerX, y: this.centerY },
     height: this.height,

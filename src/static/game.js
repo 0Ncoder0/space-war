@@ -100,7 +100,6 @@ const Game = {
       height: 100,
       width: 3
     })
-    console.log(Plane.isCrossed(new Plane(itemA.getBody()), new Plane(itemB.getBody())))
 
     printer.render(() => {
       window.GlobalItem.getItems().forEach(item => {
@@ -110,11 +109,9 @@ const Game = {
 
     window.setX = function(val) {
       itemA.centerX += val
-      console.log(Plane.isCrossed(new Plane(itemA.getBody()), new Plane(itemB.getBody())))
     }
     window.setY = function(val) {
       itemA.centerY += val
-      console.log(Plane.isCrossed(new Plane(itemA.getBody()), new Plane(itemB.getBody())))
     }
   }
 }

@@ -2,14 +2,11 @@
 import ObjectItem from './ObjectItem'
 import Printer from '../lib/Printer'
 const LockedCircle = function(target, config) {
-  console.log(1)
   ObjectItem.call(this, config)
   this.target = target
   this.radius = target.height > target.width ? target.height : target.width
   this.centerX = target.centerX
   this.centerY = target.centerY
-
-  console.log(this.getBody())
 }
 
 Object.assign(LockedCircle.prototype, ObjectItem.prototype)
@@ -26,9 +23,12 @@ LockedCircle.prototype.config_default = LockedCircle.config_default = Object.ass
   }
 )
 
-LockedCircle.prototype.stroke = function(perSecond) {
+LockedCircle.prototype.auto = function(perSecond) {
   perSecond = perSecond || 200
   const timer = setInterval(() => {
+    if(this.target.destroyed){
+      this.setDestroyed(true)
+    }
     if (this.destroyed) {
       clearInterval(timer)
       return
