@@ -79,9 +79,9 @@ Plane.prototype.isInnerPoint = function({ x, y }) {
   if (YLine === null || XLine === null) {
     return false
   }
-  const innerY = YLine.getY(x)
-  const innerX = XLine.getX(y)
-  if (innerY === null || innerX === null) {
+  const innerX = YLine.getX(y)
+  const innerY = XLine.getY(x)
+  if (innerX === null || Number.isNaN(innerX) || innerY === null || Number.isNaN(innerY)) {
     return false
   }
 
