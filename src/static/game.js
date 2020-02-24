@@ -7,6 +7,7 @@ import Ship from '../object/Ship'
 import ObjectItem from '../object/ObjectItem'
 import Plane from '../math/Plane'
 import LockedCircle from '../object/LockedCircle'
+import AI from '../lib/AI'
 window.GlobalItem = GlobalItem
 
 const Game = {
@@ -82,37 +83,32 @@ const Game = {
     })
   },
   classTest() {
+    Printer.setGlobalCanvas(window.canvas)
     const printer = new Printer()
-    const itemA = new ObjectItem({
-      angle: 92.92049999999966,
-      centerX: 329.6979892537654,
-      centerY: 111.42227340964199,
-      height: 20,
-      width: 15,
-      shape: 'triangle'
-    })
 
-    const itemB = new ObjectItem({
-      angle: 0,
-      centerX: 397.5,
-      centerY: 100,
-      color: 'green',
-      height: 100,
-      width: 3
-    })
+    const player_controller = controllers.player_0
+    player_controller.load()
 
-    printer.render(() => {
+    new ObjectItem(Object.assign({}, configs.box_test, { centerX: 100, centerY: 100 })).auto()
+    new ObjectItem(
+      Object.assign({}, configs.box_test, { centerX: printer.width / 2, centerY: 100 })
+    ).auto()
+    new ObjectItem(
+      Object.assign({}, configs.box_test, { centerX: printer.width - 100, centerY: 100 })
+    ).auto()
+    const player = new Ship(configs.player)
+
+    player.manual(player_controller)
+    player.setBulletType('bullet_normal')
+
+    AI.prototype.aim.call(player)
+    
+
+    // printer.render(() => {
       window.GlobalItem.getItems().forEach(item => {
         item.draw()
       })
-    })
-
-    window.setX = function(val) {
-      itemA.centerX += val
-    }
-    window.setY = function(val) {
-      itemA.centerY += val
-    }
+    // })
   }
 }
 export default Game

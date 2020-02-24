@@ -41,11 +41,12 @@ Printer.prototype.fill = function(points, color) {
       this.ctx.lineTo(points[i].x, points[i].y)
     }
   }
+  
   this.ctx.fillStyle = color || 'red'
   this.ctx.fill()
 }
 // 连线
-Printer.prototype.stroke=function(points,width,color){
+Printer.prototype.stroke=function(points,color,width){
   this.ctx.beginPath()
   for (let i in points) {
     if (i === 0) {
@@ -54,6 +55,8 @@ Printer.prototype.stroke=function(points,width,color){
       this.ctx.lineTo(points[i].x, points[i].y)
     }
   }
+  this.ctx.lineTo(points[0].x, points[0].y)
+
   this.ctx.strokeStyle = color || 'red'
   this.ctx.stroke()
 }
