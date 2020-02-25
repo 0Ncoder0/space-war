@@ -4,8 +4,9 @@ import Printer from '../lib/Printer'
 import Bullet from './Bullet'
 import configs from '../static/configs'
 import FlagSwitcher from '../lib/FlagSwitcher'
+import LockedCircle from './LockedCircle'
 // private
-const Ship = function(config) {
+const Ship = function (config) {
   ObjectItem.call(this, config)
   this.temp = {
     acceleration: this.acceleration,
@@ -25,13 +26,13 @@ Ship.prototype.config_default = Ship.config_default = Object.assign(
     bulletType: 'bullet_normal', //子弹类型
     openFire: false, //控制开火
     firePerSecond: 6, //开火频率 次/秒
-    ammo: 999 //弹药数
+    ammo: 699 //弹药数
   }
 )
 
 // public
 // 属性计算计时器 # 在父函数基础上新增开火计时器
-Ship.prototype.auto = function() {
+Ship.prototype.auto = function () {
   ObjectItem.prototype.auto.call(this)
   // 开火计时器
   const ship = this
@@ -46,7 +47,7 @@ Ship.prototype.auto = function() {
 }
 // 绘制 # 在父函数基础上增加尾焰绘制
 FlagSwitcher.addFlag('ShowShipState')
-Ship.prototype.draw = function() {
+Ship.prototype.draw = function () {
   ObjectItem.prototype.draw.call(this)
   const printer = new Printer()
 
@@ -61,7 +62,7 @@ Ship.prototype.draw = function() {
   }
 }
 // 挂载控制器手动操作
-Ship.prototype.manual = function(controller) {
+Ship.prototype.manual = function (controller) {
   Object.assign(this, {
     acceleration: 0,
     turnAcceleration: 0,
@@ -75,11 +76,12 @@ Ship.prototype.manual = function(controller) {
     if (actions[action.name]) {
       action.keydown.push(actions[action.name].keydown)
       action.keyup.push(actions[action.name].keyup)
+      action.keypress.push(actions[action.name].keypress)
     }
   })
 }
 // 发射导弹
-Ship.prototype.fire = function() {
+Ship.prototype.fire = function () {
   if (this.ammo <= 0) {
     return
   }
@@ -97,15 +99,29 @@ Ship.prototype.fire = function() {
     centerY: center.y,
     borderX: this.borderX,
     borderY: this.borderY,
-    angle: this.angle
+    angle: this.angle,
+    target: this.target
   }
 
   new Bullet(Object.assign({}, config, bullet_config)).auto()
   this.ammo--
 }
+Ship.prototype.aim = function () {
+  ObjectItem.prototype.aim.call(this)
+  if (this.target) {
+    this.lockedCircle = this.lockedCircle || new LockedCircle(this.target)
+    this.lockedCircle.setTarget(this.target)
+    this.lockedCircle.setDestroyed(false)
+    this.lockedCircle.auto()
+  } else {
+    this.lockedCircle && this.lockedCircle.setDestroyed(true)
+    this.lockedCircle = null
+  }
+
+}
 // getter
 // 操作
-Ship.prototype.getActions = function() {
+Ship.prototype.getActions = function () {
   const ship = this
   return {
     up: {
@@ -151,11 +167,16 @@ Ship.prototype.getActions = function() {
       keyup() {
         ship.openFire = false
       }
+    },
+    aim: {
+      keypress() {
+        ship.openAim = !ship.openAim
+      },
     }
   }
 }
 // 尾焰
-Ship.prototype.getFlame = function(shape) {
+Ship.prototype.getFlame = function (shape) {
   shape = shape || 'triangle'
   const height = (this.speed / this.maxSpeed) * this.height * 0.8
   const width = (this.speed / this.maxSpeed) * this.width * 0.8
@@ -169,7 +190,7 @@ Ship.prototype.getFlame = function(shape) {
   return points
 }
 // setter
-Ship.prototype.setTurnSpeed = function(val) {
+Ship.prototype.setTurnSpeed = function (val) {
   const rate = this.speed / this.maxSpeed
   const maxTurnSpeed = this.maxTurnSpeed * rate
   if (val > maxTurnSpeed) {
@@ -180,10 +201,11 @@ Ship.prototype.setTurnSpeed = function(val) {
     this.turnSpeed = val
   }
 }
-Ship.prototype.setBulletType = function(val) {
+Ship.prototype.setBulletType = function (val) {
   this.bulletType = val
+  this.firePerSecond = configs[val].firePerSecond
 }
-Ship.prototype.firePerSecond = function(val) {
+Ship.prototype.firePerSecond = function (val) {
   this.firePerSecond = val
 }
 export default Ship

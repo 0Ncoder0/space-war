@@ -7,6 +7,7 @@ const player_0 = {
   right: ['d', 'D'],
   left: ['a', 'A'],
   fire: ['f', 'F', ' '],
+  aim: ['q', 'Q'],
   fireMode: ['Alt'],
   weapon: ['Shift'],
   health: ['h', 'H'],

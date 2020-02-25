@@ -1,17 +1,17 @@
 // 全局Item保存工具
-const GlobalItem = function() {}
+const GlobalItem = function () { }
 
 window['global_item'] = window['global_item'] || []
 
-GlobalItem.prototype.addItem = GlobalItem.addItem = function(item) {
-  window['global_item'].push(item)
+GlobalItem.prototype.addItem = GlobalItem.addItem = function (item) {
+  window['global_item'].find(e => e.id === item.id) || window['global_item'].push(item)
 }
 
-GlobalItem.prototype.removeItem = GlobalItem.removeItem = function(item) {
+GlobalItem.prototype.removeItem = GlobalItem.removeItem = function (item) {
   window['global_item'] = window['global_item'].filter(e => e.id !== item.id)
 }
 
-GlobalItem.prototype.getItem = GlobalItem.getItem = function(filter) {
+GlobalItem.prototype.getItem = GlobalItem.getItem = function (filter) {
   return window['global_item'].find(e => {
     for (let i in filter) {
       if (filter[i] !== e[i]) {
@@ -21,7 +21,7 @@ GlobalItem.prototype.getItem = GlobalItem.getItem = function(filter) {
     return true
   })
 }
-GlobalItem.prototype.getItems = GlobalItem.getItems = function(filter) {
+GlobalItem.prototype.getItems = GlobalItem.getItems = function (filter) {
   return window['global_item'].filter(e => {
     for (let i in filter) {
       if (filter[i] !== e[i]) {

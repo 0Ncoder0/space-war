@@ -1,6 +1,6 @@
 // 控制器类
 import FlagSwitcher from './FlagSwitcher'
-const Controller = function(controls) {
+const Controller = function (controls) {
   this.actions = []
   for (let k in controls) {
     let action = {
@@ -18,7 +18,7 @@ Controller.prototype.events = Controller.events = ['keydown', 'keyup', 'keypress
 
 // 挂载控制器
 FlagSwitcher.addFlag('ShowEventKey')
-Controller.prototype.load = function() {
+Controller.prototype.load = function () {
   // 遍历事件
   this.events.forEach(event => {
     // 监听事件
@@ -29,17 +29,17 @@ Controller.prototype.load = function() {
       // 执行对应操作
       const act = this.actions.find(action => action.keys.find(k => k === e.key))
       if (act) {
-        act[event].forEach(d => d())
+        act[event].forEach(d => d && d())
       }
     })
   })
 }
 // 挂载操作
-Controller.prototype.addAction = function(name, event, action) {
+Controller.prototype.addAction = function (name, event, action) {
   this.actions.find(action => action.name == name)[event].push(action)
 }
 // 清理操作
-Controller.prototype.clearAction = function(name, event) {
+Controller.prototype.clearAction = function (name, event) {
   this.actions.find(action => action.name == name)[event] = []
 }
 

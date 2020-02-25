@@ -2,7 +2,7 @@ import Printer from '../lib/Printer'
 import Point from '../math/Point'
 import GlobalItem from '../lib/GlobalItem'
 import Plane from '../math/Plane'
-const ObjectItem = function(config) {
+const ObjectItem = function (config) {
   Object.assign(this, this.config_default, config)
   this.id = Math.random()
     .toString()
@@ -36,6 +36,7 @@ ObjectItem.prototype.config_default = ObjectItem.config_default = {
   maxHealth: 0, //最大生命值
   health: 0, //生命值 //在撞击时也是对敌方的伤害值
   armor: 0, //护甲 # 受到的伤害 = 取大于零的(伤害 - 护甲)
+  openCollisionDetection: true, //是否开启碰撞检测关闭后不会被检测到
   openDamageDetection: true, //开关伤害检测,关闭则不掉血
   // 移动速度
   acceleration: 0, //加速度 像素/秒^2
@@ -48,24 +49,16 @@ ObjectItem.prototype.config_default = ObjectItem.config_default = {
   maxTurnSpeed: 0, // 角度/秒
 
   interval: 1000 / 100, //自动模式下的数据刷新间隔
-  openCollisionDetection: true, //是否开启碰撞检测关闭后不会被检测到
-  destroyed: false // 是否已经销毁,销毁后删除全局指向,停止相关计时器
+  destroyed: false, // 是否已经销毁,销毁后删除全局指向,停止相关计时器
+
+  openAim: false,//开关瞄准功能
+  aimAble: true,//能否被瞄准
+  openTrack: false,//开关跟踪模式
+  target: null,//瞄准的目标
 }
 // public
-// 移动
-ObjectItem.prototype.move = function(distance, angle) {
-  distance = distance || this.speed
-  this.setAngle(this.angle + angle)
-  this.setCenter(
-    Point.getPoint({ x: this.centerX, y: this.centerY }, Point.toRadian(-this.angle), distance)
-  )
-}
-// 绘制
-ObjectItem.prototype.draw = function() {
-  new Printer().fill(this.getBody(), this.color)
-}
 // 自动处理数据
-ObjectItem.prototype.auto = function(perSecond) {
+ObjectItem.prototype.auto = function (perSecond) {
   perSecond = perSecond || 200
   // 移动计时器
   const timer = setInterval(() => {
@@ -73,26 +66,29 @@ ObjectItem.prototype.auto = function(perSecond) {
       clearInterval(timer)
       return
     }
+    // 移动
     this.setSpeed(this.speed + this.acceleration / perSecond)
     this.setTurnSpeed(this.turnSpeed + this.turnAcceleration / perSecond)
     const speed = this.speed / perSecond
     const turnSpeed = this.turnSpeed / perSecond
     this.move(speed, turnSpeed)
+    // 碰撞
     if (this.openCollisionDetection) this.collisionDetection()
+    // 瞄准
+    this.openAim && this.aim()
+    // 跟随
+    if (this.target === null || this.target.destroyed) {
+      this.openTrack && this.setTurnSpeed(0)
+      this.target = null
+    } else {
+      this.openTrack && this.track()
+    }
+
+
   }, 1000 / perSecond)
 }
-// 获取图形顶点坐标组
-ObjectItem.prototype.getBody = function() {
-  return Point[this.shape]({
-    center: { x: this.centerX, y: this.centerY },
-    height: this.height,
-    width: this.width,
-    radius: this.radius,
-    angle: -this.angle
-  })
-}
 // 碰撞检测
-ObjectItem.prototype.collisionDetection = function() {
+ObjectItem.prototype.collisionDetection = function () {
   if (this.openCollisionDetection === false) {
     return
   }
@@ -113,14 +109,14 @@ ObjectItem.prototype.collisionDetection = function() {
   })
 }
 //撞击时触发
-ObjectItem.prototype.onCollision = function(target) {
+ObjectItem.prototype.onCollision = function (target) {
   if (this.openCollisionDetection === false) {
     return
   }
   this.onHit(target.health)
 }
 // 受到攻击时触发
-ObjectItem.prototype.onHit = function(damage) {
+ObjectItem.prototype.onHit = function (damage) {
   if ((this.openDamageDetection = false)) {
     return
   }
@@ -130,32 +126,112 @@ ObjectItem.prototype.onHit = function(damage) {
     this.setDestroyed(true)
   }
 }
+// 移动
+ObjectItem.prototype.move = function (distance, angle) {
+  distance = distance || this.speed
+  this.setAngle(this.angle + angle)
+  this.setCenter(
+    Point.getPoint({ x: this.centerX, y: this.centerY }, Point.toRadian(-this.angle), distance)
+  )
+}
+// 绘制
+ObjectItem.prototype.draw = function () {
+  new Printer().fill(this.getBody(), this.color)
+}
+// 获取图形顶点坐标组
+ObjectItem.prototype.getBody = function () {
+  return Point[this.shape]({
+    center: { x: this.centerX, y: this.centerY },
+    height: this.height,
+    width: this.width,
+    radius: this.radius,
+    angle: -this.angle
+  })
+}
+// AI
+// 跟随目标 # 修改ObjectItem的加速度和转向速度 # prediction 是否开启跟随预判 # 用于跟踪导弹和敌人AI
+ObjectItem.prototype.track = function () {
+  this.acceleration = this.acceleration
+  let angle = - Point.getAngle({
+    x: this.centerX, y: this.centerY
+  }, {
+    x: this.target.centerX, y: this.target.centerY
+  })
+  let daAngle = angle - this.angle
+  daAngle = daAngle < 0 ? 360 + daAngle : daAngle
+  if (daAngle <= 180) {
+    this.setTurnSpeed(this.turnAcceleration)
+  } else {
+    this.setTurnSpeed(-this.turnAcceleration)
+  }
+}
+// 瞄准本体前方一定角度和范围内的最近目标 # 返回目标指向 # 用于辅助瞄准和设置跟踪导弹目标
+ObjectItem.prototype.aim = function () {
+  const height = 1000
+  const width = 600
+
+  const center = Point.getPoint(
+    { x: this.centerX, y: this.centerY },
+    Point.toRadian(-this.angle),
+    (height + this.height) / 2 + 2
+  )
+  const points = Point.triangle({
+    height: height,
+    width: width,
+    center: center,
+    angle: -(this.angle + 180)
+  })
+  //   扫描面
+  const range = new Plane(points)
+
+  let closestDistance = null
+  let findTarget = false
+  //   范围内最近的目标
+  GlobalItem.getItems().forEach(item => {
+    if (!item.aimAble || item.id === this.id) {
+      return
+    }
+    const center = {
+      x: item.centerX,
+      y: item.centerY
+    }
+    if (range.isInnerPoint(center)) {
+      const distance = Point.getDistance(center, { x: this.centerX, y: this.centerY })
+      if (closestDistance === null || distance < closestDistance) {
+        closestDistance = distance
+        findTarget = true
+        this.target = item
+      }
+    }
+  })
+  findTarget || (this.target = null)
+}
 // setter
-ObjectItem.prototype.setCenter = function(val) {
+ObjectItem.prototype.setCenter = function (val) {
   this.setY(val.y)
   this.setX(val.x)
 }
-ObjectItem.prototype.setBorder = function(val) {
+ObjectItem.prototype.setBorder = function (val) {
   this.borderX = val.x
   this.borderY = val.y
 }
-ObjectItem.prototype.setX = function(val) {
+ObjectItem.prototype.setX = function (val) {
   this.centerX = val
   if (this.centerX > this.borderX || this.centerX < 0) {
     this.setDestroyed(true)
   }
 }
-ObjectItem.prototype.setY = function(val) {
+ObjectItem.prototype.setY = function (val) {
   this.centerY = val
   if (this.centerY > this.borderY || this.centerY < 0) {
     this.setDestroyed(true)
   }
 }
-ObjectItem.prototype.setAngle = function(val) {
+ObjectItem.prototype.setAngle = function (val) {
   this.angle = val
   this.angle = (val > 0 ? 0 : 360) + (val % 360)
 }
-ObjectItem.prototype.setSpeed = function(val) {
+ObjectItem.prototype.setSpeed = function (val) {
   if (val > this.maxSpeed) {
     this.speed = this.maxSpeed
   } else if (val < this.maxBackwardSpeed) {
@@ -164,7 +240,7 @@ ObjectItem.prototype.setSpeed = function(val) {
     this.speed = val
   }
 }
-ObjectItem.prototype.setTurnSpeed = function(val) {
+ObjectItem.prototype.setTurnSpeed = function (val) {
   if (val > this.maxTurnSpeed) {
     this.turnSpeed = this.maxTurnSpeed
   } else if (val < -this.maxTurnSpeed) {
@@ -173,10 +249,12 @@ ObjectItem.prototype.setTurnSpeed = function(val) {
     this.turnSpeed = val
   }
 }
-ObjectItem.prototype.setDestroyed = function(val) {
+ObjectItem.prototype.setDestroyed = function (val) {
   this.destroyed = val
   if (this.destroyed) {
     GlobalItem.removeItem(this)
+  } else {
+    GlobalItem.addItem(this)
   }
 }
 

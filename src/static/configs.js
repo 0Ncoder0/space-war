@@ -63,7 +63,60 @@ const bullet_normal = {
   // 转向速度
   turnAcceleration: 0, //转向加速度 角度/秒^2
   turnSpeed: 0, // 转向速度 角度/秒
-  maxTurnSpeed: 0 // 角度/秒
+  maxTurnSpeed: 0, // 角度/秒
+  firePerSecond: 6
+}
+const bullet_track = {
+  shape: 'rectangle',
+  height: 10,
+  width: 3,
+  color: 'green',
+
+  centerX: 0,
+  centerY: 0,
+  centerX: printer.width / 2,
+  centerY: printer.height / 2,
+  angle: 0,
+  //血量
+  maxHealth: 20, //最大生命值
+  health: 20, //生命值 //在撞击时也是对敌方的伤害值
+  // 移动速度
+  acceleration: 0, //加速度 像素/秒^2
+  speed: 0, // 像素/秒
+  maxSpeed: 0, // 像素/秒
+  maxBackwardSpeed: 0, //最大的倒车速度
+  // 转向速度
+  turnAcceleration: 360, //转向加速度 角度/秒^2
+  turnSpeed: 0, // 转向速度 角度/秒
+  maxTurnSpeed: 360, // 角度/秒
+  openTrack: true,
+  firePerSecond: 100
+}
+const bullet_heart = {
+  shape: 'rectangle',
+  height: 10,
+  width: 3,
+  color: 'pink',
+
+  centerX: 0,
+  centerY: 0,
+  centerX: printer.width / 2,
+  centerY: printer.height / 2,
+  angle: 0,
+  //血量
+  maxHealth: 20, //最大生命值
+  health: 20, //生命值 //在撞击时也是对敌方的伤害值
+  // 移动速度
+  acceleration: 0, //加速度 像素/秒^2
+  speed: 0, // 像素/秒
+  maxSpeed: 0, // 像素/秒
+  maxBackwardSpeed: 0, //最大的倒车速度
+  // 转向速度
+  turnAcceleration: 270, //转向加速度 角度/秒^2
+  turnSpeed: 0, // 转向速度 角度/秒
+  maxTurnSpeed: 270, // 角度/秒
+  openTrack: true,
+  firePerSecond: 999
 }
 const bullet_turn = {
   shape: 'rectangle',
@@ -90,8 +143,8 @@ const box_test = {
   width: 30,
   color: 'green',
   //血量
-  maxHealth: 100, //最大生命值
-  health: 100, //生命值 //在撞击时也是对敌方的伤害值
+  maxHealth: 1000, //最大生命值
+  health: 1000, //生命值 //在撞击时也是对敌方的伤害值
 
   centerX: 0,
   centerY: 0
@@ -100,6 +153,9 @@ export default {
   fun,
   player,
   bullet_normal,
+  bullet_track,
+  bullet_heart,
   bullet_turn,
-  box_test
+  box_test,
+  
 }
