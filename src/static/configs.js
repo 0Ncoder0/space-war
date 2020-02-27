@@ -8,8 +8,6 @@ const fun = {
   angle: 270,
   centerX: 75,
   centerY: 300,
-  borderX: printer.width,
-  borderY: printer.height,
   // 移动速度
   acceleration: 1000, //加速度 像素/秒^2
   speed: 0, // 像素/秒
@@ -24,10 +22,8 @@ const player = {
   height: 20,
   width: 15,
   angle: 90,
-  centerX: printer.width / 2,
-  centerY: printer.height / 2,
-  borderX: printer.width,
-  borderY: printer.height,
+  centerX: 0,
+  centerY: 0,
   //血量
   maxHealth: 100, //最大生命值
   health: 100, //生命值 //在撞击时也是对敌方的伤害值
@@ -39,14 +35,15 @@ const player = {
   // 转向速度
   turnAcceleration: 360, //转向加速度 角度/秒^2
   turnSpeed: 0, // 转向速度 角度/秒
-  maxTurnSpeed: 360 // 角度/秒
+  maxTurnSpeed: 360, // 角度/秒
+
+  openFollowerPerspective: true,
 }
 const bullet_normal = {
   shape: 'rectangle',
   height: 10,
   width: 3,
   color: 'red',
-
   centerX: 0,
   centerY: 0,
   centerX: printer.width / 2,
@@ -71,11 +68,8 @@ const bullet_track = {
   height: 10,
   width: 3,
   color: 'green',
-
   centerX: 0,
   centerY: 0,
-  centerX: printer.width / 2,
-  centerY: printer.height / 2,
   angle: 0,
   //血量
   maxHealth: 20, //最大生命值
@@ -90,18 +84,15 @@ const bullet_track = {
   turnSpeed: 0, // 转向速度 角度/秒
   maxTurnSpeed: 360, // 角度/秒
   openTrack: true,
-  firePerSecond: 100
+  firePerSecond: 3
 }
 const bullet_heart = {
   shape: 'rectangle',
   height: 10,
   width: 3,
   color: 'pink',
-
   centerX: 0,
   centerY: 0,
-  centerX: printer.width / 2,
-  centerY: printer.height / 2,
   angle: 0,
   //血量
   maxHealth: 20, //最大生命值
@@ -157,5 +148,5 @@ export default {
   bullet_heart,
   bullet_turn,
   box_test,
-  
+
 }

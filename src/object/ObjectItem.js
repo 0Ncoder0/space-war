@@ -25,8 +25,6 @@ ObjectItem.prototype.config_default = ObjectItem.config_default = {
   color: '#FFF', // 主体颜色
   centerX: 0, // 中心X坐标
   centerY: 0, // 中心Y坐标
-  borderX: 0, // 最大X坐标值
-  borderY: 0, // 最大Y坐标值
   height: 0, // 主体高度
   width: 0, // 主体宽度
   radius: 0, //主体为圆形时的半径
@@ -217,15 +215,9 @@ ObjectItem.prototype.setBorder = function (val) {
 }
 ObjectItem.prototype.setX = function (val) {
   this.centerX = val
-  if (this.centerX > this.borderX || this.centerX < 0) {
-    this.setDestroyed(true)
-  }
 }
 ObjectItem.prototype.setY = function (val) {
   this.centerY = val
-  if (this.centerY > this.borderY || this.centerY < 0) {
-    this.setDestroyed(true)
-  }
 }
 ObjectItem.prototype.setAngle = function (val) {
   this.angle = val

@@ -1,12 +1,8 @@
 // 绘制工具
-const Printer = function(canvas) {
-  if (canvas) {
-    this.canvas = canvas
-    this.ctx = canvas.getContext('2d')
-  } else {
-    this.canvas = Printer.prototype.canvas || document.getElementById('canvas')
-    this.ctx = Printer.prototype.ctx || this.canvas.getContext('2d')
-  }
+const Printer = function () {
+  Printer.canvas = Printer.canvas || document.getElementById('canvas')
+  this.canvas = Printer.canvas
+  this.ctx = Printer.canvas.getContext('2d')
   // 画布高度
   this.height = this.canvas.height
   // 画布宽度
@@ -24,35 +20,45 @@ const Printer = function(canvas) {
   this.fps = 0
 }
 // static
-Printer.prototype.canvas = Printer.canvas = null
-Printer.prototype.ctx = Printer.ctx = null
-Printer.prototype.setGlobalCanvas = Printer.setGlobalCanvas = function(canvas) {
-  Printer.prototype.canvas = canvas
-  Printer.prototype.ctx = canvas.getContext('2d')
+
+// 偏移量
+Printer.offset = { x: 0, y: 0 }
+Printer.canvas = null
+
+Printer.prototype.setGlobalCanvas = Printer.setGlobalCanvas = function (canvas) {
+  Printer.canvas = canvas
+  Printer.ctx = canvas.getContext('2d')
 }
+Printer.prototype.setOffset = Printer.setOffset = function ({ x, y }) {
+  Printer.offset.x = x
+  Printer.offset.y = y
+}
+
 // public
 // 填充
-Printer.prototype.fill = function(points, color) {
+Printer.prototype.fill = function (points, color) {
+  const offsetX = Printer.offset.x || 0
+  const offsetY = Printer.offset.y || 0
   this.ctx.beginPath()
   for (let i in points) {
     if (i === 0) {
-      this.ctx.moveTo(points[i].x, points[i].y)
+      this.ctx.moveTo(points[i].x + offsetX, points[i].y + offsetY)
     } else {
-      this.ctx.lineTo(points[i].x, points[i].y)
+      this.ctx.lineTo(points[i].x + offsetX, points[i].y + offsetY)
     }
   }
-  
+
   this.ctx.fillStyle = color || 'red'
   this.ctx.fill()
 }
 // 连线
-Printer.prototype.stroke=function(points,color,width){
+Printer.prototype.stroke = function (points, color, width) {
   this.ctx.beginPath()
   for (let i in points) {
     if (i === 0) {
-      this.ctx.moveTo(points[i].x, points[i].y)
+      this.ctx.moveTo(points[i].x + offsetX, points[i].y + offsetY)
     } else {
-      this.ctx.lineTo(points[i].x, points[i].y)
+      this.ctx.lineTo(points[i].x + offsetX, points[i].y + offsetY)
     }
   }
   this.ctx.lineTo(points[0].x, points[0].y)
@@ -61,13 +67,28 @@ Printer.prototype.stroke=function(points,color,width){
   this.ctx.stroke()
 }
 // 写字
-Printer.prototype.write = function(text, start, color, font) {
+Printer.prototype.write = function (text, start, color, font) {
   this.ctx.font = '16px arial'
   this.ctx.fillStyle = color
   this.ctx.fillText(text, start.x, start.y)
 }
+// 画背景
+Printer.prototype.fillBackground = function () {
+  const points = this.background
+  this.ctx.beginPath()
+  for (let i in points) {
+    if (i === 0) {
+      this.ctx.moveTo(points[i].x, points[i].y)
+    } else {
+      this.ctx.lineTo(points[i].x, points[i].y)
+    }
+  }
+
+  this.ctx.fillStyle = this.backgroundColor
+  this.ctx.fill()
+}
 // 渲染器
-Printer.prototype.render = function(frame, interval) {
+Printer.prototype.render = function (frame, interval) {
   let time = {
     before: new Date().getTime(),
     after: new Date().getTime()
@@ -76,7 +97,7 @@ Printer.prototype.render = function(frame, interval) {
     time.after = new Date().getTime()
     this.fps = 1000 / (time.after - time.before)
 
-    this.fill(this.background, this.backgroundColor)
+    this.fillBackground()
     frame()
 
     time.before = new Date().getTime()

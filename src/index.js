@@ -2,5 +2,6 @@ import './static/preword'
 
 import Game from './static/game'
 
-Game.heart()
+// Game.heart()
 // Game.doublePlayerTest()
+Game.test()

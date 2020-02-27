@@ -26,7 +26,8 @@ Ship.prototype.config_default = Ship.config_default = Object.assign(
     bulletType: 'bullet_normal', //子弹类型
     openFire: false, //控制开火
     firePerSecond: 6, //开火频率 次/秒
-    ammo: 699 //弹药数
+    ammo: 699, //弹药数
+    openFollowerPerspective: false,// 视角跟随
   }
 )
 
@@ -45,6 +46,23 @@ Ship.prototype.auto = function () {
     }
   }, 1000 / this.firePerSecond)
 }
+Ship.prototype.move = function (distance, angle) {
+  ObjectItem.prototype.move.call(this, distance, angle)
+
+  if (this.openFollowerPerspective) {
+    const center = {
+      x: Printer.canvas.width / 2,
+      y: Printer.canvas.height / 2,
+    }
+    const offset = {
+      x: center.x - this.centerX,
+      y: center.y - this.centerY
+    }
+    Printer.setOffset(offset)
+  }
+
+}
+
 // 绘制 # 在父函数基础上增加尾焰绘制
 FlagSwitcher.addFlag('ShowShipState')
 Ship.prototype.draw = function () {
@@ -53,13 +71,13 @@ Ship.prototype.draw = function () {
 
   const flame = this.getFlame()
   printer.fill(flame, this.flameColor)
-  // 显示部分参数
-  if (FlagSwitcher.getFlag('ShowShipState')) {
-    const speed = this.speed.toFixed(2)
-    const angle = this.angle.toFixed(2)
-    printer.write(`SPEED : ${speed}`, { x: printer.width - 120, y: 20 }, 'green')
-    printer.write(`ANGLE : ${angle}`, { x: printer.width - 120, y: 55 }, 'green')
-  }
+  // // 显示部分参数
+  // if (FlagSwitcher.getFlag('ShowShipState')) {
+  //   const speed = this.speed.toFixed(2)
+  //   const angle = this.angle.toFixed(2)
+  //   printer.write(`SPEED : ${speed}`, { x: printer.width - 120, y: 20 }, 'green')
+  //   printer.write(`ANGLE : ${angle}`, { x: printer.width - 120, y: 55 }, 'green')
+  // }
 }
 // 挂载控制器手动操作
 Ship.prototype.manual = function (controller) {
