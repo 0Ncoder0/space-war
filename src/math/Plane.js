@@ -1,6 +1,6 @@
 import Line from './Line'
 
-const Plane = function(points) {
+const Plane = function (points) {
   this.points = points
   this.lines = []
   this.lines.push(new Line(points[0], points[points.length - 1]))
@@ -8,7 +8,9 @@ const Plane = function(points) {
     this.lines.push(new Line(points[i], points[i - 1]))
   }
 }
-Plane.prototype.isCrossed = Plane.isCrossed = function(planeA, planeB) {
+// static
+// 平面是否相交
+Plane.isCrossed = function (planeA, planeB) {
   for (let i in planeA.points) {
     const isInnerPoint = planeB.isInnerPoint(planeA.points[i])
     if (isInnerPoint) {
@@ -31,8 +33,26 @@ Plane.prototype.isCrossed = Plane.isCrossed = function(planeA, planeB) {
   }
   return false
 }
+// public
+// 点是否在平面内
+Plane.prototype.isInnerPoint = function ({ x, y }) {
+  const YLine = this.getYLine(x)
+  const XLine = this.getXLine(y)
+  if (YLine === null || XLine === null) {
+    return false
+  }
+  const innerX = YLine.getX(y)
+  const innerY = XLine.getY(x)
+  if (innerX === null || Number.isNaN(innerX) || innerY === null || Number.isNaN(innerY)) {
+    return false
+  }
+
+  return true
+}
+// getter
 // 不考虑凹型图
-Plane.prototype.getXLine = function(y) {
+// 获取过 y 与 X 轴平行的线
+Plane.prototype.getXLine = function (y) {
   let maxX = null
   let minX = null
   this.lines.forEach(line => {
@@ -52,7 +72,8 @@ Plane.prototype.getXLine = function(y) {
   }
   return null
 }
-Plane.prototype.getYLine = function(x) {
+// 获取过 x 与 Y 轴平行的线
+Plane.prototype.getYLine = function (x) {
   let maxY = null
   let minY = null
   this.lines.forEach(line => {
@@ -73,20 +94,8 @@ Plane.prototype.getYLine = function(x) {
   }
   return null
 }
-Plane.prototype.isInnerPoint = function({ x, y }) {
-  const YLine = this.getYLine(x)
-  const XLine = this.getXLine(y)
-  if (YLine === null || XLine === null) {
-    return false
-  }
-  const innerX = YLine.getX(y)
-  const innerY = XLine.getY(x)
-  if (innerX === null || Number.isNaN(innerX) || innerY === null || Number.isNaN(innerY)) {
-    return false
-  }
 
-  return true
-}
 // 考虑凹型图
+// 还没写
 
 export default Plane

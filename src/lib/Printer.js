@@ -29,11 +29,11 @@ Printer.prototype.setGlobalCanvas = Printer.setGlobalCanvas = function (canvas) 
   Printer.canvas = canvas
   Printer.ctx = canvas.getContext('2d')
 }
+// 设置偏移量
 Printer.prototype.setOffset = Printer.setOffset = function ({ x, y }) {
   Printer.offset.x = x
   Printer.offset.y = y
 }
-
 // public
 // 填充
 Printer.prototype.fill = function (points, color) {
@@ -53,6 +53,8 @@ Printer.prototype.fill = function (points, color) {
 }
 // 连线
 Printer.prototype.stroke = function (points, color, width) {
+  const offsetX = Printer.offset.x || 0
+  const offsetY = Printer.offset.y || 0
   this.ctx.beginPath()
   for (let i in points) {
     if (i === 0) {
@@ -61,7 +63,7 @@ Printer.prototype.stroke = function (points, color, width) {
       this.ctx.lineTo(points[i].x + offsetX, points[i].y + offsetY)
     }
   }
-  this.ctx.lineTo(points[0].x, points[0].y)
+  this.ctx.lineTo(points[0].x+ offsetX ,points[0].y + offsetY)
 
   this.ctx.strokeStyle = color || 'red'
   this.ctx.stroke()
@@ -72,7 +74,7 @@ Printer.prototype.write = function (text, start, color, font) {
   this.ctx.fillStyle = color
   this.ctx.fillText(text, start.x, start.y)
 }
-// 画背景
+// a
 Printer.prototype.fillBackground = function () {
   const points = this.background
   this.ctx.beginPath()

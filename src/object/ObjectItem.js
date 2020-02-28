@@ -2,6 +2,7 @@ import Printer from '../lib/Printer'
 import Point from '../math/Point'
 import GlobalItem from '../lib/GlobalItem'
 import Plane from '../math/Plane'
+
 const ObjectItem = function (config) {
   Object.assign(this, this.config_default, config)
   this.id = Math.random()
@@ -29,13 +30,6 @@ ObjectItem.prototype.config_default = ObjectItem.config_default = {
   width: 0, // 主体宽度
   radius: 0, //主体为圆形时的半径
   angle: 0, // 主体角度 PS:Y轴方向为270度,X轴方向为0度
-
-  //血量
-  maxHealth: 0, //最大生命值
-  health: 0, //生命值 //在撞击时也是对敌方的伤害值
-  armor: 0, //护甲 # 受到的伤害 = 取大于零的(伤害 - 护甲)
-  openCollisionDetection: true, //是否开启碰撞检测关闭后不会被检测到
-  openDamageDetection: true, //开关伤害检测,关闭则不掉血
   // 移动速度
   acceleration: 0, //加速度 像素/秒^2
   speed: 0, // 像素/秒
@@ -49,15 +43,14 @@ ObjectItem.prototype.config_default = ObjectItem.config_default = {
   interval: 1000 / 100, //自动模式下的数据刷新间隔
   destroyed: false, // 是否已经销毁,销毁后删除全局指向,停止相关计时器
 
-  openAim: false,//开关瞄准功能
-  aimAble: true,//能否被瞄准
-  openTrack: false,//开关跟踪模式
-  target: null,//瞄准的目标
+  // 其他
+  methods: [],//在auto中会自动遍历并调用此数组中的方法 # 频率如上
+
 }
 // public
 // 自动处理数据
-ObjectItem.prototype.auto = function (perSecond) {
-  perSecond = perSecond || 200
+ObjectItem.prototype.auto = function () {
+  const perSecond = 1000 / this.interval
   // 移动计时器
   const timer = setInterval(() => {
     if (this.destroyed) {
@@ -70,59 +63,11 @@ ObjectItem.prototype.auto = function (perSecond) {
     const speed = this.speed / perSecond
     const turnSpeed = this.turnSpeed / perSecond
     this.move(speed, turnSpeed)
-    // 碰撞
-    if (this.openCollisionDetection) this.collisionDetection()
-    // 瞄准
-    this.openAim && this.aim()
-    // 跟随
-    if (this.target === null || this.target.destroyed) {
-      this.openTrack && this.setTurnSpeed(0)
-      this.target = null
-    } else {
-      this.openTrack && this.track()
-    }
 
-
-  }, 1000 / perSecond)
-}
-// 碰撞检测
-ObjectItem.prototype.collisionDetection = function () {
-  if (this.openCollisionDetection === false) {
-    return
-  }
-  const points = this.getBody()
-  const plane = new Plane(points)
-  GlobalItem.getItems().forEach(item => {
-    if (item.openCollisionDetection === false || item.id === this.id) {
-      return
+    for (let method of this.methods) {
+      method()
     }
-    const isCrossed = Plane.isCrossed(plane, new Plane(item.getBody()))
-    if (isCrossed) {
-      console.info('检测到碰撞 id 为', this.id, item.id)
-      //顺序不能乱
-      const _item = Object.assign({}, item)
-      item.onCollision(Object.assign({}, this))
-      this.onCollision(Object.assign({}, _item))
-    }
-  })
-}
-//撞击时触发
-ObjectItem.prototype.onCollision = function (target) {
-  if (this.openCollisionDetection === false) {
-    return
-  }
-  this.onHit(target.health)
-}
-// 受到攻击时触发
-ObjectItem.prototype.onHit = function (damage) {
-  if ((this.openDamageDetection = false)) {
-    return
-  }
-  damage -= this.armor
-  this.health -= damage > 0 ? damage : 0
-  if (this.health <= 0) {
-    this.setDestroyed(true)
-  }
+  }, this.interval)
 }
 // 移动
 ObjectItem.prototype.move = function (distance, angle) {
@@ -132,10 +77,11 @@ ObjectItem.prototype.move = function (distance, angle) {
     Point.getPoint({ x: this.centerX, y: this.centerY }, Point.toRadian(-this.angle), distance)
   )
 }
-// 绘制
+// 绘制 # 全局渲染器自动调用
 ObjectItem.prototype.draw = function () {
   new Printer().fill(this.getBody(), this.color)
 }
+// getter
 // 获取图形顶点坐标组
 ObjectItem.prototype.getBody = function () {
   return Point[this.shape]({
@@ -145,64 +91,6 @@ ObjectItem.prototype.getBody = function () {
     radius: this.radius,
     angle: -this.angle
   })
-}
-// AI
-// 跟随目标 # 修改ObjectItem的加速度和转向速度 # prediction 是否开启跟随预判 # 用于跟踪导弹和敌人AI
-ObjectItem.prototype.track = function () {
-  this.acceleration = this.acceleration
-  let angle = - Point.getAngle({
-    x: this.centerX, y: this.centerY
-  }, {
-    x: this.target.centerX, y: this.target.centerY
-  })
-  let daAngle = angle - this.angle
-  daAngle = daAngle < 0 ? 360 + daAngle : daAngle
-  if (daAngle <= 180) {
-    this.setTurnSpeed(this.turnAcceleration)
-  } else {
-    this.setTurnSpeed(-this.turnAcceleration)
-  }
-}
-// 瞄准本体前方一定角度和范围内的最近目标 # 返回目标指向 # 用于辅助瞄准和设置跟踪导弹目标
-ObjectItem.prototype.aim = function () {
-  const height = 1000
-  const width = 600
-
-  const center = Point.getPoint(
-    { x: this.centerX, y: this.centerY },
-    Point.toRadian(-this.angle),
-    (height + this.height) / 2 + 2
-  )
-  const points = Point.triangle({
-    height: height,
-    width: width,
-    center: center,
-    angle: -(this.angle + 180)
-  })
-  //   扫描面
-  const range = new Plane(points)
-
-  let closestDistance = null
-  let findTarget = false
-  //   范围内最近的目标
-  GlobalItem.getItems().forEach(item => {
-    if (!item.aimAble || item.id === this.id) {
-      return
-    }
-    const center = {
-      x: item.centerX,
-      y: item.centerY
-    }
-    if (range.isInnerPoint(center)) {
-      const distance = Point.getDistance(center, { x: this.centerX, y: this.centerY })
-      if (closestDistance === null || distance < closestDistance) {
-        closestDistance = distance
-        findTarget = true
-        this.target = item
-      }
-    }
-  })
-  findTarget || (this.target = null)
 }
 // setter
 ObjectItem.prototype.setCenter = function (val) {

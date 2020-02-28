@@ -4,7 +4,7 @@ import Printer from '../lib/Printer'
 import Bullet from './Bullet'
 import configs from '../static/configs'
 import FlagSwitcher from '../lib/FlagSwitcher'
-import LockedCircle from './LockedCircle'
+import LockedCircle from './UI/LockedCircle'
 // private
 const Ship = function (config) {
   ObjectItem.call(this, config)
@@ -127,15 +127,16 @@ Ship.prototype.fire = function () {
 Ship.prototype.aim = function () {
   ObjectItem.prototype.aim.call(this)
   if (this.target) {
-    this.lockedCircle = this.lockedCircle || new LockedCircle(this.target)
-    this.lockedCircle.setTarget(this.target)
-    this.lockedCircle.setDestroyed(false)
-    this.lockedCircle.auto()
-  } else {
-    this.lockedCircle && this.lockedCircle.setDestroyed(true)
-    this.lockedCircle = null
-  }
+    if (!this.lockedCircle) {
+      this.lockedCircle = new LockedCircle(this.target)
+      return
+    }
+    if (this.lockedCircle.target.id !== this.target.id) {
+      this.lockedCircle.setDestroyed(true)
+      this.lockedCircle = new LockedCircle(this.target)
+    }
 
+  }
 }
 // getter
 // 操作
