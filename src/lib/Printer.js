@@ -74,7 +74,7 @@ Printer.prototype.write = function (text, start, color, font) {
   this.ctx.fillStyle = color
   this.ctx.fillText(text, start.x, start.y)
 }
-// a
+// 填充背景
 Printer.prototype.fillBackground = function () {
   const points = this.background
   this.ctx.beginPath()

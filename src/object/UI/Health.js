@@ -12,15 +12,14 @@ const Health = function (target, position) {
     let health = this
     let setDestroyed = this.target.setDestroyed
     this.target.setDestroyed = function (val) {
-        setDestroyed.call(this, val)
+        setDestroyed.call(target, val)
         health.setDestroyed(val)
     }
 }
 Object.assign(Health.prototype, ObjectItem.prototype)
 
 Health.prototype.config_default = Health.config_default = {
-    name: 'lockedCircle',
-    shape: 'circle',
+    name: 'health',
     color: 'green',
     backgroundColor: 'gray'
 }

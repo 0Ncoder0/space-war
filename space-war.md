@@ -75,3 +75,26 @@
    - 1. Boss 是否具备嘲讽能力 `根据不同事件或玩家行为进行嘲讽`
 
 2. Boss 火力设定
+
+
+
+* dist  `打包后的文件 可以直接打开`
+
+* node_modules `放npm导入的包的`
+
+* public `放 html css 等不需要改变的文件的 估计以后也不会变了`
+
+* src  `源码所在地` 
+   - lib 放一些工具或模块，辅助工具
+   - math 也是放工具，只是主要是数学计算功能相关的
+   - object 所有屏幕上能看到的都东西都是放在这个文件夹里面的 保存所有object类
+   - static 配置和运行时相关的功能 不是类 大多可直接导入使用
+   - 
+
+`根目录下的其他文件不用关心`
+
+## 打包
+
+* npm i -g webpack webpack-cli yarn `安装全局包` 
+* yarn add webpack webpack-cli `安装依赖`
+* yarn build `打包源码到dist`

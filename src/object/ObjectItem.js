@@ -8,11 +8,8 @@ const ObjectItem = function (config) {
   this.id = Math.random()
     .toString()
     .split('.')[1]
+
   // 在全局保存这个对象的指向
-  if (this.borderX === 0) {
-    const printer = new Printer()
-    this.setBorder({ x: printer.width, y: printer.height })
-  }
   GlobalItem.addItem(this)
 }
 // static
@@ -44,7 +41,7 @@ ObjectItem.prototype.config_default = ObjectItem.config_default = {
   destroyed: false, // 是否已经销毁,销毁后删除全局指向,停止相关计时器
 
   // 其他
-  methods: [],//在auto中会自动遍历并调用此数组中的方法 # 频率如上
+  autoMethods: [],//在auto中会自动遍历并调用此数组中的方法 # 频率如上
 
 }
 // public
@@ -64,9 +61,12 @@ ObjectItem.prototype.auto = function () {
     const turnSpeed = this.turnSpeed / perSecond
     this.move(speed, turnSpeed)
 
-    for (let method of this.methods) {
-      method()
+    if (this.autoMethods && this.autoMethods.length) {
+      for (let method of this.autoMethods) {
+        method.call(this)
+      }
     }
+
   }, this.interval)
 }
 // 移动
